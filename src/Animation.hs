@@ -1,0 +1,6 @@
+-- We also will have a data type for animations that derives from the Renderable type class
+--	data Animation = Animate { 
+--				counter :: Int
+--				frameIndex :: Int
+--				frames :: [Picture]
+--				} deriving (Renderable)
