@@ -1,0 +1,1 @@
+--We will have a Renderable type class which given an entity, returns a Picture
