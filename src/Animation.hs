@@ -14,6 +14,7 @@ data Animation = Animate {
     counter :: Int
     frameIndex :: Int
     frames :: [Picture]
+    repeating :: Bool
 } deriving (Renderable)
 
 instance Renderable Animation where
@@ -21,11 +22,12 @@ instance Renderable Animation where
 
 -- Renders the current frame of an animation
 renderAnimation :: Animation -> Picture
-renderAnimation (Animation counter frameIndex frames) | frameIndex >= 0 && frameIndex < length frames = frames !! frameIndex
-                                                      | otherwise = defaultPicture
+renderAnimation (Animation _ frameIndex frames _) | frameIndex >= 0 && frameIndex < length frames = frames !! frameIndex
+                                                  | otherwise = defaultPicture
 
 -- Updates an animation when the counter exceeds the animation threshold                                 
 updateAnimation :: Animation -> Animation
-updateAnimation (Animation counter frameIndex frames) | counter > animationThreshold && frameIndex + 1 < length frames = Animation 0 (frameIndex + 1) frames 
-                                                      | counter > animationThreshold = Animation 0 0 frames
-                                                      | otherwise = Animation (counter + 1) frameIndex frames
+updateAnimation (Animation counter frameIndex frames repeating) | counter > animationThreshold && not repeating = Animation 0 (frameIndex + 1) frames repeating
+                                                                | counter > animationThreshold && frameIndex + 1 < length frames = Animation 0 (frameIndex + 1) frames repeating 
+                                                                | counter > animationThreshold = Animation 0 0 frames repeating
+                                                                | otherwise = Animation (counter + 1) frameIndex frames repeating
