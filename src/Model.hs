@@ -13,8 +13,8 @@ nO_SECS_BETWEEN_CYCLES = 1
 data GameState = GameState {
                    infoToShow  :: InfoToShow
                  , elapsedTime :: Float
-                 , infoPlayer :: (Player,Bool)
+                 , player :: Player
                  }
 
 initialState :: GameState
-initialState = GameState ShowNothing 0 (p1, False)
+initialState = GameState ShowNothing 0 p1

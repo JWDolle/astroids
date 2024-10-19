@@ -9,3 +9,5 @@ animationThreshold = 5
 -- The default picture in case of rendering errors
 defaultPicture :: Picture
 defaultPicture = blank
+
+
