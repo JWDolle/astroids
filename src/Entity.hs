@@ -4,6 +4,7 @@ module Entity where
 
 
 import Graphics.Gloss
+import Constants
 
 pVelocity :: Float
 pVelocity = 2;
@@ -42,7 +43,7 @@ p1 = Player {
                 , isMoving = False    
                 , isRotatingL = False    
                 , isRotatingR = False
-                , pAccel = 0.5
+                , pAccel = 0.1
                 , pDecel = 0.1
                 , isDecelling = False
             }
@@ -67,8 +68,9 @@ instance Moveable Player where
            
             newSpd | isMoving = min (pSpeed + pAccel) pMaxSpd  -- Accelerate to max speed
                    | otherwise = max (pSpeed - pDecel) 0
-            adjusted | isMoving = (fst pLocation + fst pMovedir * newSpd, 
+            adjusted = (fst pLocation + fst pMovedir * newSpd, 
                                     snd pLocation + snd pMovedir * newSpd)
+               
 
     rotate_ p@Player {..} = p {
         pMovedir = adjusted

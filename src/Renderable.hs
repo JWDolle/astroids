@@ -1,9 +1,10 @@
 --We will have a Renderable type class which given an entity, returns a Picture
-
+{-# LANGUAGE RecordWildCards #-}
 module Renderable where
 import Graphics.Gloss 
 import Constants
 import Entity
+import Enemy
 
 
 -- Type class to render a picture
@@ -24,6 +25,18 @@ instance Renderable Player where
            $ pShape player  -- Finally, render the shape
 
 
+instance Renderable Comet where
+    render c@Comet {..} = 
+        let (x, y) = cLocation
+            nAngle = (-1) * extractAngle (cFacing) * (180 / pi)  -- Convert radians to degrees
+
+            -- Center of the shape (the triangle's geometric center)
+            shapeCenterX = 30  -- Adjust this based on your shape's actual geometry
+            shapeCenterY = 30
+        in translate x y  -- Step 3: Move to player's position (after rotation)
+           . rotate c_rAngle  -- Step 2: Rotate the shape around the origin (centered shape)
+           . translate (-shapeCenterX) (-shapeCenterY)  -- Step 1: Move shape center to (0,0)
+           $ cShape -- Finally, render the shape
 
 -- Flips a picture over the y-axis
 flipPicture :: Picture -> Picture

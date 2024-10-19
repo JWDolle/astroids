@@ -11,3 +11,10 @@ defaultPicture :: Picture
 defaultPicture = blank
 
 
+ --player Velocyt
+pVelocity :: Float
+pVelocity = 2;
+-- player rotation angle
+rAngle :: Float
+rAngle = 15
+

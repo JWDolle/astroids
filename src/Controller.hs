@@ -15,19 +15,19 @@ import System.Random
 
 -- GameState 
 step :: Float -> GameState -> IO GameState
-step secs gstate@(GameState i e p) = return $ stepPure secs gstate
+step secs gstate@(GameState i e p c) = return $ stepPure secs gstate
                       
 stepPure :: Float -> GameState -> GameState
-stepPure secs gstate@(GameState i e p@Player{..}) | (isMoving == True && isRotatingR == True && isRotatingL == True) = gstate { elapsedTime = elapsedTime gstate + secs, player = move p }
-                                                  | (isMoving == True && isRotatingL == True) = gstate { elapsedTime = elapsedTime gstate + secs, player = rotate_ (move p) }
-                                                  | (isMoving == True && isRotatingR == True) = gstate { elapsedTime = elapsedTime gstate + secs, player = rotate_ (move p) }
-                                                 
-                                                  | (isDecelling == True && isRotatingR == True) = gstate { elapsedTime = elapsedTime gstate + secs, player = rotate_ (move p)}
-                                                  | isMoving     = gstate { elapsedTime = elapsedTime gstate + secs, player = move p }
-                                                  | isDecelling = gstate { elapsedTime = elapsedTime gstate + secs, player = move p }
-                                                  | (isRotatingL `xor` isRotatingR)    = gstate { elapsedTime = elapsedTime gstate + secs, player = rotate_ p }
+stepPure secs gstate@(GameState i e p@Player{..} c) | (isMoving == True && isRotatingR == True && isRotatingL == True) = gstate { elapsedTime = elapsedTime gstate + secs, player = move p }
+                                                              | (isMoving == True && isRotatingL == True) = gstate { elapsedTime = elapsedTime gstate + secs, player = rotate_ (move p) }
+                                                              | (isMoving == True && isRotatingR == True) = gstate { elapsedTime = elapsedTime gstate + secs, player = rotate_ (move p) }
+                                                              | (isDecelling == True && isRotatingL == True) = gstate { elapsedTime = elapsedTime gstate + secs, player = rotate_ (move p)}
+                                                              | (isDecelling == True && isRotatingR == True) = gstate { elapsedTime = elapsedTime gstate + secs, player = rotate_ (move p)}
+                                                              | isMoving     = gstate { elapsedTime = elapsedTime gstate + secs, player = move p }
+                                                              | isDecelling = gstate { elapsedTime = elapsedTime gstate + secs, player = move p }
+                                                              | (isRotatingL `xor` isRotatingR)    = gstate { elapsedTime = elapsedTime gstate + secs, player = rotate_ p }
 
-                                                  | otherwise    = gstate { elapsedTime = elapsedTime gstate + secs, player = p}
+                                                              | otherwise    = gstate { elapsedTime = elapsedTime gstate + secs, player = p }
 
 xor :: Bool -> Bool -> Bool
 xor a b = (a || b) && not (a && b)
@@ -48,3 +48,5 @@ inputKey (EventKey (Char 'a') Down _ _ ) gstate = gstate {player = ((player gsta
 inputKey (EventKey (Char 'a') Up _ _ ) gstate = gstate {player = ((player gstate) {isRotatingR = False})}
 inputKey _ gstate = gstate
 -- Otherwise keep the same
+
+
