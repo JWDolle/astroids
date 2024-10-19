@@ -5,7 +5,7 @@
 module View where
 
 import Graphics.Gloss
-import Entity
+import Player
 import Model
 import Renderable
 import Enemy
@@ -14,7 +14,7 @@ view :: GameState -> IO Picture
 view = return . viewPure
 
 viewPure :: GameState -> Picture
-viewPure gstate = pictures [ map render ( rotate_. move $ enemy gstate), color red $ debugDirection (player gstate), color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate, render (player gstate) ]
+viewPure gstate = pictures [ pictures (map render (  enemies gstate)), color red $ debugDirection (player gstate), color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate, render (player gstate) ]
 
 
 

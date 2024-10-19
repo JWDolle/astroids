@@ -4,6 +4,7 @@ module Renderable where
 import Graphics.Gloss 
 import Constants
 import Entity
+import Player
 import Enemy
 
 
@@ -25,19 +26,18 @@ instance Renderable Player where
            $ pShape player  -- Finally, render the shape
 
 
-instance Renderable Comet where
-    render c@Comet {..} = 
+instance Renderable Enemy where
+    render (C c@Comet {..}) =
         let (x, y) = cLocation
-            nAngle = (-1) * extractAngle (cFacing) * (180 / pi)  -- Convert radians to degrees
-
-            -- Center of the shape (the triangle's geometric center)
-            shapeCenterX = 30  -- Adjust this based on your shape's actual geometry
-            shapeCenterY = 30
-        in translate x y  -- Step 3: Move to player's position (after rotation)
-           . rotate c_rAngle  -- Step 2: Rotate the shape around the origin (centered shape)
-           . translate (-shapeCenterX) (-shapeCenterY)  -- Step 1: Move shape center to (0,0)
-           $ cShape -- Finally, render the shape
-
+            nAngle = (-1) * extractAngle cFacing * (180 / pi)  -- Convert radians to degrees
+            
+            -- Center of the shape (adjust these based on your shape's actual geometry)
+            shapeCenterX = 30  
+            shapeCenterY = 30  
+        in translate x y  -- Move to comet's position
+           . rotate nAngle  -- Rotate the shape around its center
+           . translate (-shapeCenterX) (-shapeCenterY)  -- Move shape center to (0, 0)
+           $ cShape  -- Render the shape
 -- Flips a picture over the y-axis
 flipPicture :: Picture -> Picture
 flipPicture = scale (-1) (1)

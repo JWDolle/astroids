@@ -2,7 +2,7 @@ module Main where
 
 import Controller
 import Model
-import Entity
+import Player
 import View
 
 import Graphics.Gloss.Interface.IO.Game

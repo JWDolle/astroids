@@ -2,6 +2,7 @@
 --   which represent the state of the game
 module Model where
 import Entity
+import Player
 import Enemy
 data InfoToShow = ShowNothing
                 | ShowANumber Int
@@ -14,8 +15,8 @@ data GameState = GameState {
                    infoToShow  :: InfoToShow
                  , elapsedTime :: Float
                  , player :: Player
-                 , enemy  :: [Enemy]
+                 , enemies  :: [Enemy]
                  }
 
 initialState :: GameState
-initialState = GameState ShowNothing 0 p1 [c1]
+initialState = GameState ShowNothing 0 p1 [C c1]

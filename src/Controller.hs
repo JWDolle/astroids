@@ -6,6 +6,9 @@ module Controller where
 
 import Model
 import Entity
+import Player
+import Updates
+import Enemy
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
@@ -18,17 +21,13 @@ step :: Float -> GameState -> IO GameState
 step secs gstate@(GameState i e p c) = return $ stepPure secs gstate
                       
 stepPure :: Float -> GameState -> GameState
-stepPure secs gstate@(GameState i e p@Player{..} c) | (isMoving == True && isRotatingR == True && isRotatingL == True) = gstate { elapsedTime = elapsedTime gstate + secs, player = move p }
-                                                              | (isMoving == True && isRotatingL == True) = gstate { elapsedTime = elapsedTime gstate + secs, player = rotate_ (move p) }
-                                                              | (isMoving == True && isRotatingR == True) = gstate { elapsedTime = elapsedTime gstate + secs, player = rotate_ (move p) }
-                                                              | (isDecelling == True && isRotatingL == True) = gstate { elapsedTime = elapsedTime gstate + secs, player = rotate_ (move p)}
-                                                              | (isDecelling == True && isRotatingR == True) = gstate { elapsedTime = elapsedTime gstate + secs, player = rotate_ (move p)}
-                                                              | isMoving     = gstate { elapsedTime = elapsedTime gstate + secs, player = move p }
-                                                              | isDecelling = gstate { elapsedTime = elapsedTime gstate + secs, player = move p }
-                                                              | (isRotatingL `xor` isRotatingR)    = gstate { elapsedTime = elapsedTime gstate + secs, player = rotate_ p }
+stepPure secs gstate@(GameState i e p c) = 
+    let updatedState = gstate { elapsedTime = elapsedTime gstate + secs }
+        movedState = updateMovement p updatedState  -- Update movement based on state
+        rotatedState = updateRotation (player movedState) movedState  -- Update rotation based on state
+    in rotatedState { enemies = updateEnemies c }
 
-                                                              | otherwise    = gstate { elapsedTime = elapsedTime gstate + secs, player = p }
-
+    
 xor :: Bool -> Bool -> Bool
 xor a b = (a || b) && not (a && b)
                       

@@ -20,4 +20,6 @@ executable Astroids
                      , Renderable
                      , Entity
                      , Enemy
+                     , Player
+                     , Updates
   default-language:    Haskell2010

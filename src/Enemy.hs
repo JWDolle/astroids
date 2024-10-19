@@ -42,64 +42,64 @@ data Comet = Comet { -- no intelligence
     ,cRotateL :: Bool
 }
 
+
 instance Moveable Enemy where
-    move e@Comet {..} = e { 
+    move (C c@Comet {..}) = C c { 
         cLocation = adjusted
     }
         where 
             adjusted = (fst cLocation + fst cDirection * cSpeed,
                         snd cLocation + snd cDirection * cSpeed)
-    
-    move e@UFO {..} = e {
+
+    move (U u@UFO {..}) = U u {
         uLocation = adjusted
     }
         where
-            adjusted = (fst uLocation + fst uDirection * 2,  -- UFO-specific speed
+            adjusted = (fst uLocation + fst uDirection * 2,
                         snd uLocation + snd uDirection * 2)
 
-    move e@Scatter {..} = e {
+    move (S s@Scatter {..}) = S s {
         sLocation = adjusted
     }
         where
-            adjusted = (fst sLocation + fst sDirection * 1.5,  -- Scatter-specific speed
+            adjusted = (fst sLocation + fst sDirection * 1.5,
                         snd sLocation + snd sDirection * 1.5)
 
-    -- Define rotation behavior for each enemy type
-    rotate_ e@Comet {..} = e {
+    rotate_ (C c@Comet {..}) = C c {
         cFacing = adjusted
     }
         where
-            angleRadians = radians c_rAngle  -- Defined in Constants
+            angleRadians = radians c_rAngle
             cAngle = extractAngle cFacing
             nAngle = if cRotateL then cAngle - angleRadians else cAngle + angleRadians
             adjusted = (cos nAngle, sin nAngle)
-    
-    rotate_ e@UFO {..} = e { -- UFOs may not rotate in your game, but if they do:
+
+    rotate_ (U u@UFO {..}) = U u { 
         uDirection = adjusted
     }
         where
-            angleRadians = radians 10  -- Example: UFO-specific rotation speed
+            angleRadians = radians 10
             uAngle = extractAngle uDirection
-            nAngle = uAngle + angleRadians  -- UFO rotates in one direction
+            nAngle = uAngle + angleRadians
             adjusted = (cos nAngle, sin nAngle)
-    
-    rotate_ e@Scatter {..} = e { -- Scatter-specific rotation
+
+    rotate_ (S s@Scatter {..}) = S s { 
         sDirection = adjusted
     }
         where
-            angleRadians = radians 5  -- Scatter-specific rotation speed
+            angleRadians = radians 5
             sAngle = extractAngle sDirection
-            nAngle = sAngle + angleRadians  -- Scatter rotates in one direction
+            nAngle = sAngle + angleRadians
             adjusted = (cos nAngle, sin nAngle)
-
+    
 
 updateEnemies :: [Enemy] -> [Enemy]
-updateEnemies = map update 
+updateEnemies = map updateEnemy
 
 updateEnemy :: Enemy -> Enemy
-updateEnemy e@Comet {..} = rotate_ $ move e
-updateEnemy e@Scatter {..} = rotate_ $ move e
-updateEnemy e@UFO {..} = move e
+updateEnemy e@(C c)= rotate_ $ move e
+updateEnemy e@(S s)= rotate_ $ move e
+updateEnemy e@(U u) = move e
 
 
 
