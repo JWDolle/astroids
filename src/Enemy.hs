@@ -5,6 +5,7 @@
 module Enemy where
 import Graphics.Gloss
 import Entity
+import Constants
 
 
 --Constanst regarding enemies
@@ -17,7 +18,7 @@ data Enemy = S Scatter | U UFO | C Comet
 
 data Scatter = Scatter { --become small comets
     sName:: String
-    ,sLives :: Int
+    ,sLives :: Lives
     ,sLocation :: Point
     ,sDirection :: Vector
     ,sSHape:: Picture
@@ -25,7 +26,7 @@ data Scatter = Scatter { --become small comets
 
 data UFO = UFO { --shoots the player
     uName :: String
-    ,uLives :: Int
+    ,uLives :: Lives
     ,uLocation :: Point
     ,uDirection :: Vector
     ,uShape :: Picture
@@ -33,7 +34,7 @@ data UFO = UFO { --shoots the player
 data Comet = Comet { -- no intelligence
     cName:: String
 
-    ,cLives :: Int
+    ,cLives :: Lives
     ,cLocation :: Point
     ,cDirection :: Vector
     ,cFacing :: Vector
@@ -92,16 +93,6 @@ instance Moveable Enemy where
             nAngle = sAngle + angleRadians
             adjusted = (cos nAngle, sin nAngle)
     
-
-updateEnemies :: [Enemy] -> [Enemy]
-updateEnemies = map updateEnemy
-
-updateEnemy :: Enemy -> Enemy
-updateEnemy e@(C c)= rotate_ $ move e
-updateEnemy e@(S s)= rotate_ $ move e
-updateEnemy e@(U u) = move e
-
-
 
 ----EXAMPLE ENIMIES
 

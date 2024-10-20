@@ -10,7 +10,7 @@ data Moving = STOP | MOVING
 -- if we want to have turning during 
 data Player = Player {
                   pName :: String
-                , pLives :: Int 
+                , pLives :: Lives
                 , pLocation :: Point
                 , pMovedir :: Vector
                 , pShootdir:: Vector

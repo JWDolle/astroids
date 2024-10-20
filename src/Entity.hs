@@ -10,17 +10,9 @@ pVelocity :: Float
 pVelocity = 2;
 
 
-
-
-
-
-
 class Moveable a where
     move:: a -> a
     rotate_::  a -> a
-
-
-
 
 
 radians:: Float -> Float

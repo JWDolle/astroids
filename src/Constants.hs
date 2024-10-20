@@ -16,5 +16,6 @@ pVelocity :: Float
 pVelocity = 2;
 -- player rotation angle
 rAngle :: Float
-rAngle = 15
+rAngle = 7
 
+data Lives = Int
