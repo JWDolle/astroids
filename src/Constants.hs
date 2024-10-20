@@ -18,4 +18,12 @@ pVelocity = 2;
 rAngle :: Float
 rAngle = 7
 
-data Lives = Int
+type Lives = Int 
+
+
+epsilon :: Float
+epsilon = 1e-6  -- You can adjust this value as needed
+
+-- Function to check if a float is approximately zero
+isApproximatelyZero :: Float -> Bool
+isApproximatelyZero x = abs x < epsilon

@@ -16,12 +16,10 @@ instance Renderable Player where
     render player = 
         let (x, y) = pLocation player
             nAngle = (-1) * extractAngle (pMovedir player) * (180 / pi)  -- Convert radians to degrees
-
-            -- Center of the shape (the triangle's geometric center)
-            shapeCenterX = 15  -- Adjust this based on your shape's actual geometry
-            shapeCenterY = 15
-        in translate x y  -- Step 3: Move to player's position (after rotation)
-           . rotate nAngle  -- Step 2: Rotate the shape around the origin (centered shape)
+            shapeCenterX = playerWidth/2  -- Half width of the player shape
+            shapeCenterY = playerHeight/2  -- Half height of the player shape
+        in translate x y  -- Step 3: Move to player's position
+           . rotate nAngle  -- Step 2: Rotate the shape around the origin
            . translate (-shapeCenterX) (-shapeCenterY)  -- Step 1: Move shape center to (0,0)
            $ pShape player  -- Finally, render the shape
 

@@ -3,6 +3,7 @@ import Player
 import Model
 import Enemy
 import Entity
+import BoundingBox
 
 
 -- Function to update player movement
@@ -30,3 +31,12 @@ updateEnemy :: Enemy -> Enemy
 updateEnemy e@(C c)= rotate_ $ move e
 updateEnemy e@(S s)= rotate_ $ move e
 updateEnemy e@(U u) = move e
+
+checkEnemyCollision :: BoundingBox -> [Enemy] -> Bool
+checkEnemyCollision playerBB enemies = 
+    any (collide playerBB . getEnemyBB) enemies
+
+handleCollision :: GameState -> GameState
+handleCollision gstate@(GameState i e p c) =
+    let updatedPlayer = decLives p 
+    in gstate { player = updatedPlayer}

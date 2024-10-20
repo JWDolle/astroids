@@ -26,8 +26,13 @@ stepPure secs gstate@(GameState i e p c) =
     let updatedState = gstate { elapsedTime = elapsedTime gstate + secs }
         playermoved   = updateMovement p updatedState  -- Update movement based on state
         playerotated = updateRotation (player playermoved) playermoved  -- Update rotation based on state
-        fullUpdated  = updateEnemies (enemies playerotated) playerotated
-    in  fullUpdated
+        enemiesUpdated  = updateEnemies (enemies playerotated) playerotated
+
+        collisions = checkEnemyCollision (bb (player enemiesUpdated)) ( enemies enemiesUpdated)
+        collisionChecked = if collisions  
+                           then handleCollision enemiesUpdated
+                           else enemiesUpdated
+    in  collisionChecked
 
     
 xor :: Bool -> Bool -> Bool
