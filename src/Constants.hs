@@ -27,3 +27,8 @@ epsilon = 1e-6  -- You can adjust this value as needed
 -- Function to check if a float is approximately zero
 isApproximatelyZero :: Float -> Bool
 isApproximatelyZero x = abs x < epsilon
+
+normalize :: (Float, Float) -> (Float, Float)
+normalize (x, y) = 
+    let len = sqrt (x^2 + y^2)
+    in if len == 0 then (0, 0) else (x / len, y / len)

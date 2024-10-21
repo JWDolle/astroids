@@ -16,9 +16,9 @@ instance Renderable Player where
     render player = 
         let (x, y) = pLocation player
             nAngle = (-1) * extractAngle (pMovedir player) * (180 / pi)  -- Convert radians to degrees
-            shapeCenterX = playerWidth/2  -- Half width of the player shape
-            shapeCenterY = playerHeight/2  -- Half height of the player shape
-        in translate x y  -- Step 3: Move to player's position
+            shapeCenterX = 15  -- Half width of the player shape
+            shapeCenterY = 15  -- Half height of the player shape
+        in translate (x + shapeCenterX) (y + shapeCenterY)  -- Step 3: Move to player's position
            . rotate nAngle  -- Step 2: Rotate the shape around the origin
            . translate (-shapeCenterX) (-shapeCenterY)  -- Step 1: Move shape center to (0,0)
            $ pShape player  -- Finally, render the shape
@@ -32,7 +32,7 @@ instance Renderable Enemy where
             -- Center of the shape (adjust these based on your shape's actual geometry)
             shapeCenterX = 30  
             shapeCenterY = 30  
-        in translate x y  -- Move to comet's position
+        in translate (x + shapeCenterX ) ( y +shapeCenterY)  -- Move to comet's position
            . rotate nAngle  -- Rotate the shape around its center
            . translate (-shapeCenterX) (-shapeCenterY)  -- Move shape center to (0, 0)
            $ cShape  -- Render the shape

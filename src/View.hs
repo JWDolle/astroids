@@ -17,7 +17,7 @@ view :: GameState -> IO Picture
 view = return . viewPure
 
 viewPure :: GameState -> Picture
-viewPure gstate = pictures [pictures (map render (  enemies gstate)), color red $ debugDirection (player gstate), color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate, render (player gstate), drawBoundingBox (bb (player gstate))  ]
+viewPure gstate = pictures [pictures (map render (  enemies gstate)), color red $ debugDirection (player gstate), color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate, render (player gstate), drawBoundingBox (bb (player gstate)), pictures (map drawBoundingBox ( map getEnemyBB (enemies gstate)))  ]
 
 
 
@@ -48,7 +48,7 @@ debugDirection Player{..} =
     let (x, y) = pLocation         -- Get player location
         (dx, dy) = pMovedir      -- Get direction vector
         directionEnd = (x + dx * 50, y + dy * 50)  -- Calculate end point
-    in line [ (x, y), directionEnd ]  -- Draw a line from the location to the end point
+    in translate (playerWidth/2) (playerWidth/2) $ line [ (x, y), directionEnd ]  -- Draw a line from the location to the end point
 debugPlayer :: GameState -> Picture
 debugPlayer gstate = pictures [
     translate (-180) 680  textLine1,
@@ -64,6 +64,7 @@ debugPlayer gstate = pictures [
     translate (-180) (-1320) textLine11,  -- Second corner
     translate (-180) (-1520) textLine12,  -- Third corner
     translate (-180) (-1720) textLine13   -- Fourth corner
+    
     ]
   where
     cplayer = player gstate  -- Extract the player from the game state
@@ -74,7 +75,7 @@ debugPlayer gstate = pictures [
     textLine1 = text $ "bbRotation: " ++ show (rotation bounding)
     textLine2 = text $ "Lives: " ++ show (pLives cplayer)
     textLine3 = text $ "Location: " ++ show (pLocation cplayer)
-    textLine4 = text $ "Direction: " ++ show (extractAngle (pMovedir cplayer))
+    textLine4 = text $ "Direction: " ++ show (degrees(extractAngle (pMovedir cplayer)))
     textLine5 = text $ "Speed: " ++ show (pSpeed cplayer)
     textLine6 = text $ "Is Moving: " ++ show (isMoving cplayer)
     textLine7 = text $ "Speed: " ++ show (pSpeed cplayer)
@@ -89,9 +90,18 @@ debugPlayer gstate = pictures [
 
 
 drawBoundingBox :: BoundingBox -> Picture
-drawBoundingBox  bb =
+drawBoundingBox bb =
     let corners = bbCorners bb  -- Get the corners of the bounding box
-        centerPoint = (centerX bb, centerY bb) -- Get the center of the bounding box
-        cornerLines = rotate (radians (rotation bb)) $ lineLoop corners -- Create a polygon that connects the corners
-        centerDot = translate 0 0 $ color red $ circleSolid 5
-    in pictures [color green cornerLines, centerDot] -- 
+        cx = centerX bb         -- Get the center X of the bounding box
+        cy = centerY bb         -- Get the center Y of the bounding box
+        
+        -- First translate to the origin, then rotate, then translate back
+        cornerLines = translate cx cy 
+                      $ rotate (radians (rotation bb)) 
+                      $ translate (-cx) (-cy) 
+                      $ lineLoop corners  -- Create a polygon that connects the corners
+                      
+        -- Draw a red dot at the center of the bounding box
+        centerDot = translate cx cy $ color red $ circleSolid 5
+
+    in pictures [color green cornerLines, centerDot] 

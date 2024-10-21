@@ -44,10 +44,13 @@ overlap (min1, max1) (min2, max2) =
                  
 collide :: BoundingBox -> BoundingBox -> Bool
 collide bb1 bb2    =    
-    let axes1 = [(cos (rotation bb1), sin (rotation bb1)),
-                 (-sin (rotation bb1), cos (rotation bb1))]
-        axes2 = [(cos (rotation bb2), sin (rotation bb2)),
-                 (-sin (rotation bb2), cos (rotation bb2))]
+    let 
+        angle1 = radians $ rotation bb1
+        angle2 = radians $ rotation bb2
+        axes1 = [(cos (angle1), sin (angle1)),
+                 (-sin (angle1), cos (angle1))]
+        axes2 = [(cos (angle2), sin angle2),
+                 (-sin angle2, cos angle2)]
         axes = axes1 ++ axes2
         projections1 = map (projectBB bb1) axes
         projections2 = map (projectBB bb2) axes
