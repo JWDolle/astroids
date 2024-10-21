@@ -16,5 +16,5 @@ pVelocity :: Float
 pVelocity = 2;
 -- player rotation angle
 rAngle :: Float
-rAngle = 15
+rAngle = 3
 
