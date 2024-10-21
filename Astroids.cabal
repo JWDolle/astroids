@@ -22,4 +22,5 @@ executable Astroids
                      , Enemy
                      , Player
                      , Updates
+                     , BoundingBox
   default-language:    Haskell2010

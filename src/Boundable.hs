@@ -1,1 +1,0 @@
---We will also have a Boundable type class that takes two types of bounding boxes to check if they intersect. This should work for bounding boxes that are square and potentially circle. 

@@ -18,15 +18,24 @@ import System.Random
 
 -- GameState 
 step :: Float -> GameState -> IO GameState
-step secs gstate@(GameState i e p c) = return $ stepPure secs gstate
-                      
+step secs gstate@(GameState i e p c _) = return $ stepPure secs gstate
+  
 stepPure :: Float -> GameState -> GameState
-stepPure secs gstate@(GameState i e p c) = 
+stepPure secs gstate@(GameState i e p c Playing) = 
+  --- THIS FUNCTIONS AS A PIPELINE THIS WILL RETURN A FULLY UPDATED GAME STATE
     let updatedState = gstate { elapsedTime = elapsedTime gstate + secs }
-        movedState = updateMovement p updatedState  -- Update movement based on state
-        rotatedState = updateRotation (player movedState) movedState  -- Update rotation based on state
-    in rotatedState { enemies = updateEnemies c }
+        playermoved   = updateMovement p updatedState  -- Update movement based on state
+        playerotated = updateRotation (player playermoved) playermoved  -- Update rotation based on state
+        enemiesUpdated  = updateEnemies (enemies playerotated) playerotated
 
+        collisions = checkEnemyCollision (bb (player enemiesUpdated)) ( enemies enemiesUpdated)
+        collisionChecked = if collisions  
+                           then handleCollision enemiesUpdated
+                           else enemiesUpdated
+    in  collisionChecked
+
+stepPure sec gstate@(GameState _ _ _ _ Paused) = gstate
+stepPure sec gstate@(GameState _ _ _ _ GameOver) = gstate
     
 xor :: Bool -> Bool -> Bool
 xor a b = (a || b) && not (a && b)
