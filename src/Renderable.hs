@@ -6,6 +6,7 @@ import Constants
 import Entity
 import Player
 import Enemy
+import Projectile
 
 
 -- Type class to render a picture
@@ -35,7 +36,10 @@ instance Renderable Enemy where
         in translate (x + shapeCenterX ) ( y +shapeCenterY)  -- Move to comet's position
            . rotate nAngle  -- Rotate the shape around its center
            . translate (-shapeCenterX) (-shapeCenterY)  -- Move shape center to (0, 0)
-           $ cShape  -- Render the shape
+           $ cShape 
+           
+
+        -- Render the shape
 -- Flips a picture over the y-axis
 flipPicture :: Picture -> Picture
 flipPicture = scale (-1) (1)

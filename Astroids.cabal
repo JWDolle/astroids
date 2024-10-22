@@ -23,4 +23,5 @@ executable Astroids
                      , Player
                      , Updates
                      , BoundingBox
+                     , Collision
   default-language:    Haskell2010

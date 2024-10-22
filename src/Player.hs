@@ -20,7 +20,7 @@ playerHeight = 30
 -- if we want to have turning during 
 data Player = Player {
                   pName :: String
-                , pLives :: Lives
+                , pLives :: Int
                 , pLocation :: Point
                 , pMovedir :: Vector
                 , pShootdir:: Vector

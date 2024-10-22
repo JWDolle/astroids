@@ -9,9 +9,6 @@ import Constants
 import BoundingBox
 
 
---Constanst regarding enemies
-c_rAngle :: Float
-c_rAngle = 0.1
 
 ---Data types
 
@@ -19,7 +16,7 @@ data Enemy = S Scatter | U UFO | C Comet
 
 data Scatter = Scatter { --become small comets
     sName:: String
-    ,sLives :: Lives
+    ,sLives :: Int
     ,sLocation :: Point
     ,sDirection :: Vector
     ,sSHape:: Picture
@@ -28,7 +25,7 @@ data Scatter = Scatter { --become small comets
 
 data UFO = UFO { --shoots the player
     uName :: String
-    ,uLives :: Lives
+    ,uLives :: Int
     ,uLocation :: Point
     ,uDirection :: Vector
     ,uShape :: Picture
@@ -36,7 +33,7 @@ data UFO = UFO { --shoots the player
 }
 data Comet = Comet { -- no intelligence
     cName:: String
-    ,cLives :: Lives
+    ,cLives :: Int
     ,cLocation :: Point
     ,cDirection :: Vector
     ,cFacing :: Vector

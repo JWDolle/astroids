@@ -10,6 +10,8 @@ animationThreshold = 5
 defaultPicture :: Picture
 defaultPicture = blank
 
+c_rAngle :: Float
+c_rAngle = 0.1
 
  --player Velocyt
 pVelocity :: Float
@@ -18,8 +20,11 @@ pVelocity = 2;
 rAngle :: Float
 rAngle = 7
 
-type Lives = Int 
 
+
+
+bulletSpeed :: Float
+bulletSpeed = 4
 
 epsilon :: Float
 epsilon = 1e-6  -- You can adjust this value as needed

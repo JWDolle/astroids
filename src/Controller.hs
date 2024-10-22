@@ -3,7 +3,7 @@
 -- | This module defines how the state changes
 --   in response to time and user input
 module Controller where
-
+import Collision
 import Model
 import Entity
 import Player
@@ -54,6 +54,12 @@ inputKey (EventKey (Char 'd') Up _ _ ) gstate = gstate {player = ((player gstate
 inputKey (EventKey (Char 'a') Down _ _ ) gstate = gstate {player = ((player gstate) {isRotatingR = True, 
                                                                                     isRotatingL = False})} 
 inputKey (EventKey (Char 'a') Up _ _ ) gstate = gstate {player = ((player gstate) {isRotatingR = False})}
+
+
+inputKey (EventKey (Char 'p') Down _ _) gstate@(GameState _ _ _ _ Playing )= gstate {state = Paused}
+inputKey (EventKey (Char 'p') Down _ _) gstate@(GameState _ _ _ _ Paused )= gstate {state = Playing}
+
+
 inputKey _ gstate = gstate
 -- Otherwise keep the same
 
