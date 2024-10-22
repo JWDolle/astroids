@@ -16,4 +16,12 @@ executable Astroids
   other-modules:       Controller
                      , Model
                      , View
+                     , Constants
+                     , Renderable
+                     , Entity
+                     , Enemy
+                     , Player
+                     , Updates
+                     , BoundingBox
+                     , Collision
   default-language:    Haskell2010

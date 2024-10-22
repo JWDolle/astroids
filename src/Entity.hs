@@ -1,2 +1,28 @@
+{-# LANGUAGE RecordWildCards #-}
 -- Entity code goes here (shared code for player, enemies and projectiles)
--- Example move function
+module Entity where
+
+
+import Graphics.Gloss
+import Constants
+
+pVelocity :: Float
+pVelocity = 2;
+
+
+class Moveable a where
+    move:: a -> a
+    rotate_::  a -> a
+
+
+radians:: Float -> Float
+radians d = d * (pi/180)
+
+degrees :: Float -> Float
+degrees r =  r * (180/ pi)
+extractAngle :: Vector -> Float
+extractAngle v = atan2 (snd v) (fst v)
+
+
+
+            
