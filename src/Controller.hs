@@ -18,11 +18,11 @@ step :: Float -> GameState -> IO GameState
 step secs gstate@(GameState i e p c _ _ _) = return $ stepPure secs gstate
   
 stepPure :: Float -> GameState -> GameState
-stepPure secs gstate@(GameState i e p c u s Playing) = pipeline1 secs gstate
+stepPure secs gstate@GameState{state = Playing} = pipeline1 secs gstate
 
 
-stepPure sec gstate@(GameState _ _ _ _ _ _ Paused) = gstate
-stepPure sec gstate@(GameState _ _ _ _ _ _ GameOver) = gstate
+stepPure sec gstate@GameState{state = Paused} = gstate
+stepPure sec gstate@GamState{state = GameOver} = gstate
     
 xor :: Bool -> Bool -> Bool
 xor a b = (a || b) && not (a && b)
@@ -43,8 +43,8 @@ inputKey (EventKey (Char 'a') Down _ _ ) gstate = gstate {player = ((player gsta
 inputKey (EventKey (Char 'a') Up _ _ ) gstate = gstate {player = ((player gstate) {isRotatingR = False})}
 
 
-inputKey (EventKey (Char 'p') Down _ _) gstate@(GameState _ _ _ _ _ _ Playing )= gstate {state = Paused}
-inputKey (EventKey (Char 'p') Down _ _) gstate@(GameState _ _ _ _ _ _ Paused )= gstate {state = Playing}
+inputKey (EventKey (Char 'p') Down _ _) gstate@(GameState _ _ _ _ _ _ _ Playing )= gstate {state = Paused}
+inputKey (EventKey (Char 'p') Down _ _) gstate@(GameState _ _ _ _ _ _ _ Paused )= gstate {state = Playing}
 
 
 inputKey _ gstate = gstate

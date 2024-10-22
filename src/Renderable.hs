@@ -40,6 +40,7 @@ instance Renderable Comet where
            $ cShape 
 
 
+
            
 
         -- Render the shape

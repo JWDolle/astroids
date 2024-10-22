@@ -3,6 +3,7 @@
 module Model where
 import Entity
 import Player
+import Projectile
 import Enemy
 data InfoToShow = ShowNothing
                 | ShowANumber Int
@@ -19,8 +20,10 @@ data GameState = GameState {
                  , comets :: [Comet]
                  , ufos :: [UFO]
                  , scatters :: [Scatter]
+                 , lasers :: Lasers
+                 , bullets :: Bullets
                  , state :: State
                  }
 
 initialState :: GameState
-initialState = GameState ShowNothing 0 p1 [c2, c1] [] [] Playing
+initialState = GameState ShowNothing 0 p1 [c2, c1] [] [] [] [] Playing

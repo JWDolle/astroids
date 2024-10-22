@@ -27,15 +27,15 @@ updateRotation p gstate =
     in gstate { player = rotatedPlayer }
 
 updateEnemies ::  GameState -> GameState
-updateEnemies gstate@(GameState _ _ _ c u s _ ) = gstate{comets = map (\x -> rotate_ (move x)) c,
-                                                  scatters = map (\x -> rotate_ (move x))s,
-                                                  ufos = map (\x -> move x) u}
+updateEnemies gstate@GameState{..} = gstate{comets = map (\x -> rotate_ (move x)) comets,
+                                                  scatters = map (\x -> rotate_ (move x))scatters,
+                                                  ufos = map (\x -> move x) ufos}
 
 
 updatePlayer:: GameState -> GameState
-updatePlayer gstate@(GameState _ _ p _ _ _ _)= 
+updatePlayer gstate@GameState{..}= 
     let
-        movedPlayer = updateMovement p gstate
+        movedPlayer = updateMovement player gstate
         rotatedPlayer = updateRotation (player movedPlayer) movedPlayer
         updatedPlayer = rotatedPlayer
     in  updatedPlayer

@@ -1,4 +1,3 @@
--- Projectile code goes here
 
 {-# LANGUAGE RecordWildCards #-}
 module Projectile where
@@ -8,41 +7,41 @@ import Entity
 import Constants
 
 
-
-
-data Bullet = Bullet {
-    bShape :: Picture
-    ,bBB :: BoundingBox
-    ,bLocation :: Point
-    ,bDirection :: Vector
-    
-} 
-data Laser = Laser {
-    lShape :: Picture
-    ,lBB :: BoundingBox
-    ,lLocation :: Point
-    ,lDirection :: Vector
+data Projectile = Projectile{
+    pShape :: Picture
+    ,pBB :: BoundingBox
+    ,pLocation :: Point
+    ,pDirection :: Vector
 }
 
-type Bullets = [Bullet]
-type Lasers = [Laser]
 
-addBullet :: Bullet -> Bullets -> Bullets
-addBullet x xs = if (length xs) < 3 then x:xs
-                 else xs
 
-instance Moveable Bullet where
-    move b@(Bullet {..}) = b { 
-        bLocation = adjusted,
-        bBB = updatedBB
+
+
+spawnBullet :: Projectile  -> Bullets -> Bullets
+spawnBullet x xs | length xs < 3 = x : xs
+                 | otherwise =  xs
+
+
+
+type Lasers = [Projectile]
+type Bullets = [Projectile]
+instance Moveable Projectile where
+    move p@Projectile{..} = p { 
+        pLocation = adjusted,
+        pBB = updatedBB
     }
         where 
-            adjusted = (fst bLocation + fst bDirection * bulletSpeed,
-                        snd bLocation + snd bDirection * bulletSpeed)
+            adjusted = (fst pLocation + fst pDirection * bulletSpeed,
+                        snd pLocation + snd pDirection * bulletSpeed)
                   -- Compute the change in position
-            (dx, dy) = (fst adjusted - fst bLocation, snd adjusted - snd bLocation)
+            (dx, dy) = (fst adjusted - fst pLocation, snd adjusted - snd pLocation)
 
             -- Update the bounding box based on movement
-            updatedBB = updateBoundingBox (dx, dy) (rotation bBB) bBB
+            updatedBB = updateBoundingBox (dx, dy) (rotation pBB) pBB
    
-    rotate_ b = b
+    rotate_ p = p
+instance HasBounding Projectile where
+    getBB p@Projectile{..} = pBB
+
+

@@ -1,5 +1,5 @@
 
-
+{-# LANGUAGE RecordWildCards #-}
 module Collision where
 import Graphics.Gloss
 import BoundingBox
@@ -13,7 +13,7 @@ import Model
 
 ----EVERYTHING THAT NEEDS TO HAPPEN WHEN THERE IS A COLLISION
 handleCollision :: GameState -> GameState
-handleCollision gstate@(GameState i e p c u s Playing) =
+handleCollision gstate@(GameState i e p c u s b l Playing) =
     let updatedPlayer = handlePlayerCollision p
         newState | pLives updatedPlayer == 0 = GameOver
                  | otherwise = Playing
