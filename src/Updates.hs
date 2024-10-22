@@ -33,9 +33,9 @@ updateEnemies gstate@GameState{..} = gstate{comets = map (\x -> rotate_ (move x)
 
 
 updatePlayer:: GameState -> GameState
-updatePlayer gstate@GameState{..}= 
+updatePlayer gstate@(GameState _ _ p _ _ _ _ _ _)= 
     let
-        movedPlayer = updateMovement player gstate
+        movedPlayer = updateMovement p gstate
         rotatedPlayer = updateRotation (player movedPlayer) movedPlayer
         updatedPlayer = rotatedPlayer
     in  updatedPlayer
