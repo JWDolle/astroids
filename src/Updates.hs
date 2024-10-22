@@ -1,6 +1,7 @@
 {-# LANGUAGE RecordWildCards #-}
 
 
+
 module Updates where
 import Player
 import Model
@@ -25,13 +26,24 @@ updateRotation p gstate =
                         else p
     in gstate { player = rotatedPlayer }
 
-updateEnemies :: [Enemy] -> GameState -> GameState
-updateEnemies enemies gstate = 
-        let newEnemies = map updateEnemy enemies
-        in gstate {enemies = newEnemies}
+updateEnemies ::  GameState -> GameState
+updateEnemies gstate@(GameState _ _ _ c u s _ ) = gstate{comets = map (\x -> rotate_ (move x)) c,
+                                                  scatters = map (\x -> rotate_ (move x))s,
+                                                  ufos = map (\x -> move x) u}
 
-updateEnemy :: Enemy -> Enemy
-updateEnemy e@(C c)= rotate_ $ move e
-updateEnemy e@(S s)= rotate_ $ move e
-updateEnemy e@(U u) = move e
 
+updatePlayer:: GameState -> GameState
+updatePlayer gstate@(GameState _ _ p _ _ _ _)= 
+    let
+        movedPlayer = updateMovement p gstate
+        rotatedPlayer = updateRotation (player movedPlayer) movedPlayer
+        updatedPlayer = rotatedPlayer
+    in  updatedPlayer
+
+
+
+
+
+
+
+ 

@@ -17,7 +17,11 @@ view :: GameState -> IO Picture
 view = return . viewPure
 
 viewPure :: GameState -> Picture
-viewPure gstate = pictures [pictures (map render (  enemies gstate)), color red $ debugDirection (player gstate), color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate, render (player gstate), drawBoundingBox (bb (player gstate)), pictures (map drawBoundingBox ( map getEnemyBB (enemies gstate)))  ]
+viewPure gstate = pictures [pictures (map render (comets gstate)), 
+                            color red $ debugDirection (player gstate), 
+                            color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate,
+                            render (player gstate), drawBoundingBox (bb (player gstate)), 
+                            pictures (map drawBoundingBox ( map getBB (comets gstate)))  ]
 
 
 

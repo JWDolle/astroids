@@ -6,6 +6,7 @@ import Constants
 import Entity
 import Player
 import Enemy
+import BoundingBox
 import Projectile
 
 
@@ -25,18 +26,20 @@ instance Renderable Player where
            $ pShape player  -- Finally, render the shape
 
 
-instance Renderable Enemy where
-    render (C c@Comet {..}) =
+instance Renderable Comet where
+    render c@Comet {..} =
         let (x, y) = cLocation
             nAngle = (-1) * extractAngle cFacing * (180 / pi)  -- Convert radians to degrees
             
             -- Center of the shape (adjust these based on your shape's actual geometry)
-            shapeCenterX = 30  
-            shapeCenterY = 30  
+            shapeCenterX = halfWidth cBB 
+            shapeCenterY = halfHeigth cBB 
         in translate (x + shapeCenterX ) ( y +shapeCenterY)  -- Move to comet's position
            . rotate nAngle  -- Rotate the shape around its center
            . translate (-shapeCenterX) (-shapeCenterY)  -- Move shape center to (0, 0)
            $ cShape 
+
+
            
 
         -- Render the shape

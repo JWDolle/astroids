@@ -11,9 +11,10 @@ import BoundingBox
 
 
 ---Data types
+class Moveable a => Enemy a where
+    updateEnemy :: a -> a
 
-data Enemy = S Scatter | U UFO | C Comet
-
+    
 data Scatter = Scatter { --become small comets
     sName:: String
     ,sLives :: Int
@@ -44,8 +45,8 @@ data Comet = Comet { -- no intelligence
 }
 
 
-instance Moveable Enemy where
-    move (C c@Comet {..}) = C c { 
+instance Moveable Comet where
+    move c@Comet{..} =  c { 
         cLocation = adjusted,
         cBB = updatedBB
     }
@@ -58,8 +59,22 @@ instance Moveable Enemy where
             -- Update the bounding box based on movement
             updatedBB = updateBoundingBox (dx, dy) (rotation cBB) cBB
 
+    rotate_ c@Comet {..} = c {
+        cFacing = normalized,
+        cBB = updatedBB
+    }
+        where
+            angleRadians = radians c_rAngle
+            cAngle = extractAngle cFacing
+            nAngle = if cRotateL then cAngle - angleRadians else cAngle + angleRadians
+            adjusted = (cos nAngle, sin nAngle)
+            normalized = normalize adjusted
+         -- Update the bounding box with new rotation
+            updatedBB = updateBoundingBox (0, 0) (degrees nAngle) cBB
+     
 
-    move (U u@UFO {..}) = U u {
+instance Moveable  UFO where
+    move  u@UFO {..} = u {
         uLocation = adjusted,
         uBB = updatedBB
     }
@@ -71,8 +86,21 @@ instance Moveable Enemy where
 
             -- Update the bounding box based on movement
             updatedBB = updateBoundingBox (dx, dy) (rotation uBB) uBB
+    rotate_ u@UFO {..} = u {
+        uDirection = normalized,
+        uBB = updatedBB
+    }
+        where
+            angleRadians = radians 10
+            uAngle = extractAngle uDirection
+            nAngle = uAngle + angleRadians
+            adjusted = (cos nAngle, sin nAngle)
+         -- Update the bounding box with new rotation
+            normalized = normalize adjusted
+            updatedBB = updateBoundingBox (0, 0) (degrees nAngle) uBB
 
-    move (S s@Scatter {..}) = S s {
+instance Moveable Scatter where
+    move s@Scatter {..} =  s {
         sLocation = adjusted,
         sBB = updatedBB
     }
@@ -85,31 +113,8 @@ instance Moveable Enemy where
             -- Update the bounding box based on movement
             updatedBB = updateBoundingBox (dx, dy) (rotation sBB) sBB
 
-    rotate_ (C c@Comet {..}) = C c {
-        cFacing = normalized,
-        cBB = updatedBB
-    }
-        where
-            angleRadians = radians c_rAngle
-            cAngle = extractAngle cFacing
-            nAngle = if cRotateL then cAngle - angleRadians else cAngle + angleRadians
-            adjusted = (cos nAngle, sin nAngle)
-            normalized = normalize adjusted
-         -- Update the bounding box with new rotation
-            updatedBB = updateBoundingBox (0, 0) (degrees nAngle) cBB
-    rotate_ (U u@UFO {..}) = U u { 
-        uDirection = normalized,
-        uBB = updatedBB
-    }
-        where
-            angleRadians = radians 10
-            uAngle = extractAngle uDirection
-            nAngle = uAngle + angleRadians
-            adjusted = (cos nAngle, sin nAngle)
-         -- Update the bounding box with new rotation
-            normalized = normalize adjusted
-            updatedBB = updateBoundingBox (0, 0) (degrees nAngle) uBB
-    rotate_ (S s@Scatter {..}) = S s { 
+ 
+    rotate_ s@Scatter {..} = s { 
         sDirection = normalized,
         sBB = updatedBB
     }
@@ -122,24 +127,41 @@ instance Moveable Enemy where
             -- Update the bounding box with new rotation
             updatedBB = updateBoundingBox (0, 0) (degrees nAngle) sBB
     
-getEnemyBB :: Enemy -> BoundingBox
-getEnemyBB (S s) = sBB s
-getEnemyBB (U u) = uBB u
-getEnemyBB (C c) = cBB c
+instance HasBounding Comet where
+    getBB c@Comet{..} = cBB
+instance HasBounding UFO where
+    getBB u@UFO{..} = uBB
+instance HasBounding Scatter where
+    getBB s@Scatter{..} = sBB
 
-enemyBoundingBoxes :: [Enemy] -> [BoundingBox]
-enemyBoundingBoxes enemies = map getEnemyBB enemies
+
+
+
 ----EXAMPLE ENIMIES
 
 c1 :: Comet
 c1 = Comet {
     cName = "Test comet"
     ,cLives = 5
-    ,cLocation = (0, 100) -- center of the thing 
+    ,cLocation = (-100, 100) -- center of the thing 
     ,cDirection = (1,0)
     ,cFacing = (1, 0)
     ,cShape = color red $ polygon [(0,0), (0,60), (60,60),(60,0)]
     ,cSpeed = 0
     ,cRotateL = True
-    ,cBB = BB{ centerX = 30, centerY = 130, halfWidth = 30, halfHeight = 30, rotation = 90}
+    ,cBB = BB{ centerX = -70, centerY = 130, halfWidth = 30, halfHeigth = 30, rotation = 90}
+}
+
+
+c2 :: Comet
+c2 = Comet {
+    cName = "Test comet 2"
+    ,cLives = 5
+    ,cLocation = (0, 100) -- center of the thing 
+    ,cDirection = (1,0)
+    ,cFacing = (1, 0)
+    ,cShape = color red $ polygon [(0,0), (0,40), (40,40),(40,0)]
+    ,cSpeed = 0
+    ,cRotateL = True
+    ,cBB = BB{ centerX = 20, centerY = 120, halfWidth = 20, halfHeigth = 20, rotation = 90}
 }

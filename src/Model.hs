@@ -16,9 +16,11 @@ data GameState = GameState {
                    infoToShow  :: InfoToShow
                  , elapsedTime :: Float
                  , player :: Player
-                 , enemies  :: [Enemy]
+                 , comets :: [Comet]
+                 , ufos :: [UFO]
+                 , scatters :: [Scatter]
                  , state :: State
                  }
 
 initialState :: GameState
-initialState = GameState ShowNothing 0 p1 [C c1] Playing
+initialState = GameState ShowNothing 0 p1 [c2, c1] [] [] Playing

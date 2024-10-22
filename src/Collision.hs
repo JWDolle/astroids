@@ -9,13 +9,11 @@ import Constants
 import Entity
 import Model 
 
-checkEnemyCollision :: BoundingBox -> [Enemy] -> Bool
-checkEnemyCollision playerBB enemies = 
-    any (collide playerBB . getEnemyBB) enemies
+
 
 ----EVERYTHING THAT NEEDS TO HAPPEN WHEN THERE IS A COLLISION
 handleCollision :: GameState -> GameState
-handleCollision gstate@(GameState i e p c Playing) =
+handleCollision gstate@(GameState i e p c u s Playing) =
     let updatedPlayer = handlePlayerCollision p
         newState | pLives updatedPlayer == 0 = GameOver
                  | otherwise = Playing
@@ -28,4 +26,10 @@ handlePlayerCollision p = p
     , bb = bb p1
     , pSpeed = 0
     }
- 
+
+checkCollision :: (HasBounding b, HasBounding a) => a -> [b] -> Bool
+checkCollision a bs = 
+    any (collide a ) bs
+
+checkAllEnemyColision :: Player-> [Comet] -> [Scatter] -> [UFO] -> Bool
+checkAllEnemyColision player cs ss ufos = checkCollision player cs || checkCollision player ss || checkCollision player ufos

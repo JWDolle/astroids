@@ -61,9 +61,11 @@ p1 = Player {
                 , pAccel = 0.1
                 , pDecel = 0.1
                 , isDecelling = False
-                , bb = BB{centerX = (fst player1Local) + playerWidth/2 , centerY = (snd player1Local) + playerWidth/2, halfWidth = playerWidth/2, halfHeight = playerWidth/2, rotation = 90}
+                , bb = BB{centerX = (fst player1Local) + playerWidth/2 , centerY = (snd player1Local) + playerWidth/2, halfWidth = playerWidth/2, halfHeigth = playerWidth/2, rotation = 90}
             }
 
+instance HasBounding Player where
+    getBB p@Player {..} = bb    
 
 
 -- moveable objects are things that can rotate and move 
@@ -92,12 +94,10 @@ instance Moveable Player where
             newIsDecelling | newSpd > 0 = True
                            | otherwise = False
 
-
-
-    rotate_ p@Player {..} = p {
+    rotate_ p@Player{..} = p {
         pMovedir = normalized,  -- Update player's direction
         bb = updatedBB        -- Update the player's bounding box
-        }
+    }
         where
             -- Define the angle of rotation (for example, 5 degrees)
             angleRadians = radians rAngle  -- Example fixed rotation angle of 5 degrees

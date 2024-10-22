@@ -10,7 +10,7 @@ data BoundingBox
             centerX :: Float
             ,centerY :: Float
             , halfWidth :: Float
-            , halfHeight :: Float
+            , halfHeigth :: Float
             , rotation :: Float 
       } 
     deriving (Show, Eq)
@@ -45,9 +45,11 @@ overlap :: (Float, Float) -> (Float, Float) -> Bool
 overlap (min1, max1) (min2, max2) = 
     not (max1 < min2 || max2 < min1)
                  
-collide :: BoundingBox -> BoundingBox -> Bool
-collision bb1 bb2    =    
+collide ::(HasBounding a , HasBounding b) => a -> b -> Bool
+collide a b    =    
     let 
+        bb1 = getBB a
+        bb2 = getBB b 
         angle1 = radians $ rotation bb1
         angle2 = radians $ rotation bb2
         axes1 = [(cos (angle1), sin (angle1)),
