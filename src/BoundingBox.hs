@@ -15,6 +15,9 @@ data BoundingBox
       } 
     deriving (Show, Eq)
 
+class HasBounding a where
+    getBB :: a -> BoundingBox
+
 bbCorners :: BoundingBox -> [Point]
 bbCorners (BB cx cy hw hh r) =
     let cosR = cos (radians r)
@@ -43,7 +46,7 @@ overlap (min1, max1) (min2, max2) =
     not (max1 < min2 || max2 < min1)
                  
 collide :: BoundingBox -> BoundingBox -> Bool
-collide bb1 bb2    =    
+collision bb1 bb2    =    
     let 
         angle1 = radians $ rotation bb1
         angle2 = radians $ rotation bb2
@@ -64,6 +67,7 @@ updateBoundingBox (dx, dy) newRotation bb = bb {
     rotation = newRotation          -- Update rotation
 }
 
-     
+ ----------------    
 
 
+    -- update player = 
