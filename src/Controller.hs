@@ -6,6 +6,7 @@ module Controller where
 import Pipeline
 import Model
 import Player
+import Projectile
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
@@ -45,6 +46,8 @@ inputKey (EventKey (Char 'a') Up _ _ ) gstate = gstate {player = ((player gstate
 
 inputKey (EventKey (Char 'p') Down _ _) gstate@GameState{state = Playing}= gstate {state = Paused}
 inputKey (EventKey (Char 'p') Down _ _) gstate@GameState{state = Paused}= gstate {state = Playing}
+
+inputKey (EventKey (SpecialKey KeySpace)Up _ _)  gstate@GameState{..} = gstate {bullets = spawnBullet (createbullet player) bullets }
 
 
 inputKey _ gstate = gstate

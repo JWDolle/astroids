@@ -24,7 +24,7 @@ rAngle = 7
 
 
 bulletSpeed :: Float
-bulletSpeed = 4
+bulletSpeed = 1
 
 epsilon :: Float
 epsilon = 1e-6  -- You can adjust this value as needed
