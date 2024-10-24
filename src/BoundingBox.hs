@@ -59,10 +59,16 @@ collide bb1 bb2    =
 
 updateBoundingBox :: Vector -> Float -> BoundingBox -> BoundingBox
 updateBoundingBox (dx, dy) newRotation bb = bb {
-    centerX = (centerX bb) + dx, 
-    centerY = (centerY bb) + dy,  -- Update center coordinates
+    centerX = correctedCenterX bb dx, 
+    centerY = correctedCenterY bb dy,  -- Update center coordinates
     rotation = newRotation          -- Update rotation
-}
+} where
+    correctedCenterX bb dx | (centerX bb) + dx > (fromIntegral screenSize) / 2 = (centerX bb) + dx - fromIntegral screenSize
+                           | (centerX bb) + dx < -((fromIntegral screenSize) / 2) = (centerX bb) + dx + fromIntegral screenSize
+                           | otherwise = (centerX bb) + dx
+    correctedCenterY bb dy | (centerY bb) + dy > (fromIntegral screenSize) / 2 = (centerY bb) + dy - fromIntegral screenSize
+                           | (centerY bb) + dy < -((fromIntegral screenSize) / 2) = (centerY bb) + dy + fromIntegral screenSize
+                           | otherwise = (centerY bb) + dy
 
      
 

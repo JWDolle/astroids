@@ -4,6 +4,10 @@ import Graphics.Gloss
 import Random
 import System.Random
 
+--
+screenSize :: Int
+screenSize = 400
+
 -- The number of frames for an animation to update
 animationThreshold :: Int
 animationThreshold = 5
