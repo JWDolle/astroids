@@ -72,7 +72,7 @@ p1 = Player {
 -- moveable objects are things that can rotate and move 
 instance Moveable Player where
     move p@Player {..} = p { 
-        pLocation = adjusted,  -- Update the player's location
+        pLocation = (centerX newbb - 15, centerY newbb - 15),  -- Update the player's location
         pSpeed = newSpd,        -- Update speed based on acceleration or deceleration
         bb = newbb,
         animation = updateAnimation (animation),
