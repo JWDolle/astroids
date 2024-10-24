@@ -1,8 +1,8 @@
 -- All constants go here
 module Constants where
 import Graphics.Gloss
---import Random
---import System.Random
+import Random
+import System.Random
 
 -- The number of frames for an animation to update
 animationThreshold :: Int
@@ -22,9 +22,11 @@ pVelocity = 2;
 rAngle :: Float
 rAngle = 7
 
+-- The starting random seed
 seed :: StdGen
 seed = randomSeed 1
 
+-- Filepath to the highscores file
 scoreFilePath :: FilePath
 scoreFilePath = "highscores.txt"
 
