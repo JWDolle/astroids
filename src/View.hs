@@ -12,15 +12,36 @@ import Renderable
 import Enemy
 import BoundingBox
 import Entity
+import Score
 
 view :: GameState -> IO Picture
-view = return . viewPure
+view gstate@(GameState _ _ _ _ GameOver) = do 
+    scores <- drawHighScores
+    return $ pictures [scores, viewPure gstate]
+        
+
+view gstate = return $ viewPure gstate
 
 viewPure :: GameState -> Picture
-viewPure gstate = pictures [pictures (map render (  enemies gstate)), color red $ debugDirection (player gstate), color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate, render (player gstate), drawBoundingBox (bb (player gstate)), pictures (map drawBoundingBox ( map getEnemyBB (enemies gstate)))  ]
+viewPure gstate = pictures [pictures (map render (  enemies gstate)), 
+                            color red $ debugDirection (player gstate), 
+                            color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate, 
+                            render (player gstate), 
+                            drawBoundingBox (bb (player gstate)), 
+                            pictures (map drawBoundingBox ( map getEnemyBB (enemies gstate)))]
 
-
-
+drawHighScores :: IO Picture
+drawHighScores = do
+    scoreString <- readFromFile scoreFilePath
+    let scores = getScores scoreString
+    let pic = pictures [
+            color white $ scale 0.1 0.1 $ translate (400) 680  (text $ "Highscores:"),
+            color white $ scale 0.1 0.1 $ translate (400) 480  (text $ "1: " ++ show (scores !! 0)),
+            color white $ scale 0.1 0.1 $ translate (400) 280  (text $ "2: " ++ show (scores !! 1)),
+            color white $ scale 0.1 0.1 $ translate (400) 80   (text $ "3: " ++ show (scores !! 2)),
+            color white $ scale 0.1 0.1 $ translate (400) (-120) (text $ "4: " ++ show (scores !! 3)),
+            color white $ scale 0.1 0.1 $ translate (400) (-320) (text $ "5: " ++ show (scores !! 4))]
+    return pic
 
 
 
@@ -105,3 +126,5 @@ drawBoundingBox bb =
         centerDot = translate cx cy $ color red $ circleSolid 5
 
     in pictures [color green cornerLines, centerDot] 
+
+

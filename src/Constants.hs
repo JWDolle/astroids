@@ -28,7 +28,7 @@ seed = randomSeed 1
 
 -- Filepath to the highscores file
 scoreFilePath :: FilePath
-scoreFilePath = "highscores.txt"
+scoreFilePath = "src/highscores.txt"
 
 
 bulletSpeed :: Float
