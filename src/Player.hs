@@ -5,6 +5,7 @@ import Graphics.Gloss
 import Entity
 import Constants
 import BoundingBox
+import Animation
 
 
 data Moving = STOP | MOVING
@@ -33,6 +34,7 @@ data Player = Player {
                 , pAccel :: Float
                 , pDecel :: Float
                 , isDecelling:: Bool
+                , animation:: Animation
                 , bb :: BoundingBox
                 }
 
@@ -61,6 +63,7 @@ p1 = Player {
                 , pAccel = 0.1
                 , pDecel = 0.1
                 , isDecelling = False
+                , animation = (Animate 1 0 [color blue (polygon[(0,0), (30,0), (30,30), (0,30)]), color red (polygon[(0,0), (30,0), (30,30), (0,30)])] True)
                 , bb = BB{centerX = (fst player1Local) + playerWidth/2 , centerY = (snd player1Local) + playerWidth/2, halfWidth = playerWidth/2, halfHeight = playerWidth/2, rotation = 90}
             }
 
@@ -72,6 +75,7 @@ instance Moveable Player where
         pLocation = adjusted,  -- Update the player's location
         pSpeed = newSpd,        -- Update speed based on acceleration or deceleration
         bb = newbb,
+        animation = updateAnimation (animation),
         isDecelling = newIsDecelling
     }
         where 

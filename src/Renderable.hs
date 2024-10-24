@@ -7,6 +7,7 @@ import Entity
 import Player
 import Enemy
 import Projectile
+import Animation
 
 
 -- Type class to render a picture
@@ -22,7 +23,7 @@ instance Renderable Player where
         in translate (x + shapeCenterX) (y + shapeCenterY)  -- Step 3: Move to player's position
            . rotate nAngle  -- Step 2: Rotate the shape around the origin
            . translate (-shapeCenterX) (-shapeCenterY)  -- Step 1: Move shape center to (0,0)
-           $ pShape player  -- Finally, render the shape
+           $ renderAnimation $ animation player  -- Finally, render the shape
 
 
 instance Renderable Enemy where
