@@ -1,6 +1,8 @@
 -- All constants go here
 module Constants where
 import Graphics.Gloss
+--import Random
+--import System.Random
 
 -- The number of frames for an animation to update
 animationThreshold :: Int
@@ -20,7 +22,11 @@ pVelocity = 2;
 rAngle :: Float
 rAngle = 7
 
+seed :: StdGen
+seed = randomSeed 1
 
+scoreFilePath :: FilePath
+scoreFilePath = "highscores.txt"
 
 
 bulletSpeed :: Float
