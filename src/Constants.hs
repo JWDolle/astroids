@@ -6,7 +6,7 @@ import System.Random
 
 --
 screenSize :: Int
-screenSize = 400
+screenSize = 800
 
 -- The number of frames for an animation to update
 animationThreshold :: Int
@@ -36,7 +36,7 @@ scoreFilePath = "src/highscores.txt"
 
 
 bulletSpeed :: Float
-bulletSpeed = 1
+bulletSpeed = 4
 
 epsilon :: Float
 epsilon = 1e-6  -- You can adjust this value as needed
@@ -49,3 +49,12 @@ normalize :: (Float, Float) -> (Float, Float)
 normalize (x, y) = 
     let len = sqrt (x^2 + y^2)
     in if len == 0 then (0, 0) else (x / len, y / len)
+
+frameRate :: Int
+frameRate = 60
+
+bulletExistance :: Int 
+bulletExistance = 1 * frameRate
+
+shootCooldown:: Int
+shootCooldown = 5

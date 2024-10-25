@@ -77,12 +77,3 @@ updateBoundingBox (dx, dy) newRotation  bb = bb {
                            | (centerY bb) + dy < -((fromIntegral screenSize) / 2) = (centerY bb) + dy + fromIntegral screenSize
                            | otherwise = (centerY bb) + dy
 
-outOfBounds:: Vector -> BoundingBox -> Bool
-outOfBounds (dx, dy) bb   | (centerX bb) + dx > (fromIntegral screenSize) / 2 = True
-                           | (centerX bb) + dx < -((fromIntegral screenSize) / 2) = True
-                           | (centerY bb) + dy > (fromIntegral screenSize) / 2 = True
-                           | (centerY bb) + dy < -((fromIntegral screenSize) / 2) = True
-                           | otherwise = False
-
-
-

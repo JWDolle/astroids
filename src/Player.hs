@@ -35,8 +35,7 @@ data Player = Player {
                 , bb :: BoundingBox
                 }
 
-getPlayerBB :: Player -> BoundingBox
-getPlayerBB p = bb p
+
 
 
 maxSpeed :: Float

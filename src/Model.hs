@@ -4,6 +4,7 @@ module Model where
 import Entity
 import Player
 import Projectile
+import Sprites
 import Enemy
 data InfoToShow = ShowNothing
                 | ShowANumber Int
@@ -23,7 +24,8 @@ data GameState = GameState {
                  , lasers :: Lasers
                  , bullets :: Bullets
                  , state :: State
+                 --, sprites :: Sprites
                  }
 
-initialState :: GameState
-initialState = GameState ShowNothing 0 p1 [c1] [] [] [] [] Playing
+initialState ::  GameState
+initialState  = GameState ShowNothing 0 p1 [c1] [] [] [] [] Playing 

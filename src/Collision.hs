@@ -18,7 +18,7 @@ import Model
     
 
 handleCollision :: GameState -> GameState
-handleCollision gstate@(GameState i e p c u s l b Playing) =
+handleCollision gstate@(GameState i e p c u s l b Playing ) =
     let playerCollision  = handlePlayerCollision p gstate
         newBullets       = map (\x -> handleBulletCollisions x gstate) b
         cometCollision   = map (\z -> handleCometCollision z gstate) c

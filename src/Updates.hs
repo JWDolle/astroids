@@ -34,17 +34,18 @@ updateEnemies gstate@GameState{..} = gstate{comets = map (\x -> rotate_ (move x)
 
 
 updatePlayer:: GameState -> GameState
-updatePlayer gstate@(GameState _ _ p _ _ _ _ _ _)= 
+updatePlayer gstate@(GameState _ _ p _ _ _ _ _ _ )= 
     let
         movedPlayer = updateMovementPlayer p gstate
         rotatedPlayer = updateRotationPlayer (player movedPlayer) movedPlayer
         updatedPlayer = rotatedPlayer
     in  updatedPlayer
 
-updateBullets:: GameState -> GameState
-updateBullets gstate@(GameState _ _ _ _ _ _ _ b _ ) =
+updateBullets:: Float -> GameState -> GameState
+updateBullets secs gstate@(GameState _ _ _ _ _ _ _ b _ ) =
     let 
-        movedBullets = map move b
+        timedOut = filterProjectiles (map (\x -> outOfTime x secs ) b)
+        movedBullets = map move timedOut
         updatedBullets = gstate{ bullets = filterProjectiles movedBullets }
     in  updatedBullets
 

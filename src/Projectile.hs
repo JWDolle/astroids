@@ -6,7 +6,7 @@ import BoundingBox
 import Entity
 import Player
 
-import Constants
+import Constants 
 
 
 data Projectile = Projectile{
@@ -15,6 +15,7 @@ data Projectile = Projectile{
     ,prLocation :: Point
     ,prDirection :: Vector
     ,prAlive :: Bool
+    ,time :: Int
 }
 
 
@@ -22,15 +23,17 @@ data Projectile = Projectile{
 
 
 spawnBullet :: Projectile  -> Bullets -> Bullets
-spawnBullet x xs | True = x : xs
+spawnBullet x xs | length xs < shootCooldown = x : xs
                  | otherwise =  xs
 
-
+outOfTime :: Projectile -> Float -> Projectile
+outOfTime b secs | time b > bulletExistance = b {prAlive = False}
+                 | otherwise = b
 
 type Lasers = [Projectile]
 type Bullets = [Projectile]
-createbullet :: Player -> Projectile
-createbullet p@Player{..} =
+createbullet ::  Player -> Projectile
+createbullet  p@Player{..} =
     let
         dirOff = (fst pMovedir * playerWidth/2, snd pMovedir * playerHeigth/2)
         ofset = (fst pLocation + (playerWidth/2) + fst dirOff - 5, snd pLocation + (playerHeigth/2) + snd dirOff -5)
@@ -46,7 +49,9 @@ createbullet p@Player{..} =
         },
         prLocation = bulletLocation,
         prDirection = pMovedir,
-        prAlive = True   
+        prAlive = True,   
+        time = 0
+
     }
 
 
@@ -54,7 +59,7 @@ instance Moveable Projectile where
     move p@Projectile{..} = p { 
         prLocation = adjusted,
         prBB = updatedBB,
-        prAlive = alive
+        time = time  + 1
     }
         where 
             adjusted = (fst prLocation + fst prDirection * bulletSpeed,
@@ -63,10 +68,9 @@ instance Moveable Projectile where
             (dx, dy) = (fst adjusted - fst prLocation, snd adjusted - snd prLocation)
 
             -- Update the bounding box based on movement
-            outOf = outOfBounds (dx,dy) prBB
+            
             updatedBB = updateBoundingBox (dx, dy) (rotation prBB)  prBB
-            alive | outOf = False
-                  | otherwise = True
+           
 
    
     rotate_ p = p
