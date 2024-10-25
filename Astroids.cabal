@@ -25,4 +25,5 @@ executable Astroids
                      , BoundingBox
                      , Collision
                      , Pipeline
+                     , Projectile
   default-language:    Haskell2010
