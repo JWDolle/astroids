@@ -2,8 +2,11 @@
 {-# LANGUAGE RecordWildCards #-}
 module Projectile where
 import Graphics.Gloss
+import Graphics.Gloss.Data.Vector (rotateV, mulSV, unitVectorAtAngle)
 import BoundingBox
 import Entity
+import Player
+
 import Constants
 
 
@@ -12,6 +15,7 @@ data Projectile = Projectile{
     ,prBB :: BoundingBox
     ,prLocation :: Point
     ,prDirection :: Vector
+    ,prAlive :: Bool
 }
 
 
@@ -19,13 +23,33 @@ data Projectile = Projectile{
 
 
 spawnBullet :: Projectile  -> Bullets -> Bullets
-spawnBullet x xs | length xs < 3 = x : xs
+spawnBullet x xs | True = x : xs
                  | otherwise =  xs
 
 
 
 type Lasers = [Projectile]
 type Bullets = [Projectile]
+createbullet :: Player -> Projectile
+createbullet p@Player{..} =
+    let
+        dirOff = (fst pMovedir * playerWidth/2, snd pMovedir * playerHeigth/2)
+        ofset = (fst pLocation + (playerWidth/2) + fst dirOff - 5, snd pLocation + (playerHeigth/2) + snd dirOff -5)
+        bulletLocation = ofset
+    in   Projectile {
+        prShape = color blue $ polygon [(0,0), (0,10), (10,10), (10,0)],
+        prBB = BB {
+            centerX = fst bulletLocation + 5,
+            centerY = snd bulletLocation + 5,
+            halfWidth = 5,
+            halfHeigth = 5,
+            rotation = degrees (extractAngle pMovedir) -- Use degrees here for the display rotation
+        },
+        prLocation = bulletLocation,
+        prDirection = pMovedir,
+        prAlive = True
+    }
+
 
 instance Moveable Projectile where
     move p@Projectile{..} = p { 
@@ -46,3 +70,6 @@ instance HasBounding Projectile where
     getBB p@Projectile{..} = prBB
 
 
+
+filterProjectiles :: [Projectile] -> [Projectile]
+filterProjectiles l = filter prAlive l

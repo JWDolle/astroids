@@ -5,17 +5,16 @@ import Updates
 
 -- this is for a pipelin looking like this {GameState i e p c Playing}
 pipeline1:: Float -> GameState -> GameState
-pipeline1 secs gstate@(GameState i e p c u s b l Playing) =
+pipeline1 secs gstate@(GameState i e p c u s l b Playing) =
     let 
         timeUpdate = gstate{elapsedTime = e + secs }
         playerUpdate = updatePlayer timeUpdate
         enemiesUpdated = updateEnemies playerUpdate
-       
+        bulletUpdated = updateBullets enemiesUpdated
 
-        collisions = checkAllEnemyColision (player enemiesUpdated) ( comets enemiesUpdated)  (scatters enemiesUpdated) ( ufos enemiesUpdated)
-        collisionChecked = if collisions  
-                           then handleCollision enemiesUpdated
-                           else enemiesUpdated
-        updatedState = collisionChecked
+       
+        collisionHandle = handleCollision bulletUpdated
+       
+        
+        updatedState = collisionHandle
     in updatedState
-    

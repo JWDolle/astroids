@@ -13,37 +13,28 @@ import Projectile
 -- Type class to render a picture
 class Renderable a where
     render :: a -> Picture
+transformations :: Point -> Vector -> Float -> Float -> Picture -> Picture
+transformations local@(x,y) dir cX cY pic= translate (x + cX) (y + cY)
+                                           . rotate nAngle
+                                           . translate (-cX) (-cY)
+                                           $ pic
+        where 
+            nAngle = (-1) * degrees(extractAngle dir)
 
 instance Renderable Player where
-    render player = 
-        let (x, y) = pLocation player
-            nAngle = (-1) * extractAngle (pMovedir player) * (180 / pi)  -- Convert radians to degrees
-            shapeCenterX = 15  -- Half width of the player shape
-            shapeCenterY = 15  -- Half height of the player shape
-        in translate (x + shapeCenterX) (y + shapeCenterY)  -- Step 3: Move to player's position
-           . rotate nAngle  -- Step 2: Rotate the shape around the origin
-           . translate (-shapeCenterX) (-shapeCenterY)  -- Step 1: Move shape center to (0,0)
-           $ pShape player  -- Finally, render the shape
-
+    render player@Player{..} = transformations pLocation pMovedir 15 15 pShape
 
 instance Renderable Comet where
-    render c@Comet {..} =
-        let (x, y) = cLocation
-            nAngle = (-1) * extractAngle cFacing * (180 / pi)  -- Convert radians to degrees
-            
-            -- Center of the shape (adjust these based on your shape's actual geometry)
-            shapeCenterX = halfWidth cBB 
-            shapeCenterY = halfHeigth cBB 
-        in translate (x + shapeCenterX ) ( y +shapeCenterY)  -- Move to comet's position
-           . rotate nAngle  -- Rotate the shape around its center
-           . translate (-shapeCenterX) (-shapeCenterY)  -- Move shape center to (0, 0)
-           $ cShape 
+    render comet@Comet{..} = transformations cLocation cFacing (halfWidth cBB) (halfHeigth cBB) cShape
 
+instance Renderable Projectile where
+    render projectile@Projectile {..} = transformations prLocation prDirection 5 5 prShape
 
-
-           
-
-        -- Render the shape
+renderBullets :: Bullets -> Picture
+renderBullets b = pictures $ map render b
+   
+renderLasers:: Lasers -> [Picture]
+renderLasers l = map render l
 -- Flips a picture over the y-axis
 flipPicture :: Picture -> Picture
 flipPicture = scale (-1) (1)

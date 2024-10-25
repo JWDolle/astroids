@@ -18,6 +18,7 @@ data BoundingBox
 class HasBounding a where
     getBB :: a -> BoundingBox
 
+
 bbCorners :: BoundingBox -> [Point]
 bbCorners (BB cx cy hw hh r) =
     let cosR = cos (radians r)
