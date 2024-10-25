@@ -19,7 +19,7 @@ radians:: Float -> Float
 radians d = d * (pi/180)
 
 degrees :: Float -> Float
-degrees r =  r * (180/ pi)
+degrees r =  r * (180/pi)
 extractAngle :: Vector -> Float
 extractAngle v = atan2 (snd v) (fst v)
 

@@ -17,7 +17,7 @@ defaultPicture :: Picture
 defaultPicture = blank
 
 c_rAngle :: Float
-c_rAngle = 0.1
+c_rAngle = 2
 
  --player Velocyt
 pVelocity :: Float
@@ -36,7 +36,7 @@ scoreFilePath = "src/highscores.txt"
 
 
 bulletSpeed :: Float
-bulletSpeed = 4
+bulletSpeed = 1
 
 epsilon :: Float
 epsilon = 1e-6  -- You can adjust this value as needed

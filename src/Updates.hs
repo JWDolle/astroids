@@ -1,37 +1,56 @@
 {-# LANGUAGE RecordWildCards #-}
 
 
+
 module Updates where
 import Player
 import Model
 import Enemy
 import Entity
 import BoundingBox
+import Projectile
 
 
 -- Function to update player movement
-updateMovement :: Player -> GameState -> GameState
-updateMovement p gstate =
+updateMovementPlayer :: Player -> GameState -> GameState
+updateMovementPlayer p gstate =
     let newPlayer = if isMoving p || isDecelling p
                     then move p
                     else p
     in gstate { player = newPlayer }
 
 -- Function to update player rotation
-updateRotation :: Player -> GameState -> GameState
-updateRotation p gstate =
+updateRotationPlayer :: Player -> GameState -> GameState
+updateRotationPlayer p gstate =
     let rotatedPlayer = if isRotatingL p || isRotatingR p
                         then rotate_ p
                         else p
     in gstate { player = rotatedPlayer }
 
-updateEnemies :: [Enemy] -> GameState -> GameState
-updateEnemies enemies gstate = 
-        let newEnemies = map updateEnemy enemies
-        in gstate {enemies = newEnemies}
+updateEnemies ::  GameState -> GameState
+updateEnemies gstate@GameState{..} = gstate{comets = map (\x -> rotate_ (move x)) comets,
+                                                  scatters = map (\x -> rotate_ (move x))scatters,
+                                                  ufos = map (\x -> move x) ufos}
 
-updateEnemy :: Enemy -> Enemy
-updateEnemy e@(C c)= rotate_ $ move e
-updateEnemy e@(S s)= rotate_ $ move e
-updateEnemy e@(U u) = move e
 
+updatePlayer:: GameState -> GameState
+updatePlayer gstate@(GameState _ _ p _ _ _ _ _ _)= 
+    let
+        movedPlayer = updateMovementPlayer p gstate
+        rotatedPlayer = updateRotationPlayer (player movedPlayer) movedPlayer
+        updatedPlayer = rotatedPlayer
+    in  updatedPlayer
+
+updateBullets:: GameState -> GameState
+updateBullets gstate@(GameState _ _ _ _ _ _ _ b _ ) =
+    let 
+        movedBullets = map move b
+        updatedBullets = gstate{ bullets = filterProjectiles movedBullets }
+    in  updatedBullets
+
+
+
+
+
+
+ 

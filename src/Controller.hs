@@ -3,12 +3,10 @@
 -- | This module defines how the state changes
 --   in response to time and user input
 module Controller where
-import Collision
+import Pipeline
 import Model
-import Entity
 import Player
-import Updates
-import Enemy
+import Projectile
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
@@ -18,24 +16,14 @@ import System.Random
 
 -- GameState 
 step :: Float -> GameState -> IO GameState
-step secs gstate@(GameState i e p c _) = return $ stepPure secs gstate
+step secs gstate@GameState{..} = return $ stepPure secs gstate
   
 stepPure :: Float -> GameState -> GameState
-stepPure secs gstate@(GameState i e p c Playing) = 
-  --- THIS FUNCTIONS AS A PIPELINE THIS WILL RETURN A FULLY UPDATED GAME STATE
-    let updatedState = gstate { elapsedTime = elapsedTime gstate + secs }
-        playermoved   = updateMovement p updatedState  -- Update movement based on state
-        playerotated = updateRotation (player playermoved) playermoved  -- Update rotation based on state
-        enemiesUpdated  = updateEnemies (enemies playerotated) playerotated
+stepPure secs gstate@GameState{state = Playing} = pipeline1 secs gstate
 
-        collisions = checkEnemyCollision (bb (player enemiesUpdated)) ( enemies enemiesUpdated)
-        collisionChecked = if collisions  
-                           then handleCollision enemiesUpdated
-                           else enemiesUpdated
-    in  collisionChecked
 
-stepPure sec gstate@(GameState _ _ _ _ Paused) = gstate
-stepPure sec gstate@(GameState _ _ _ _ GameOver) = gstate
+stepPure sec gstate@GameState{state = Paused} = gstate
+stepPure sec gstate@GameState{state = GameOver} = gstate
     
 xor :: Bool -> Bool -> Bool
 xor a b = (a || b) && not (a && b)
@@ -56,8 +44,10 @@ inputKey (EventKey (Char 'a') Down _ _ ) gstate = gstate {player = ((player gsta
 inputKey (EventKey (Char 'a') Up _ _ ) gstate = gstate {player = ((player gstate) {isRotatingR = False})}
 
 
-inputKey (EventKey (Char 'p') Down _ _) gstate@(GameState _ _ _ _ Playing )= gstate {state = Paused}
-inputKey (EventKey (Char 'p') Down _ _) gstate@(GameState _ _ _ _ Paused )= gstate {state = Playing}
+inputKey (EventKey (Char 'p') Down _ _) gstate@GameState{state = Playing}= gstate {state = Paused}
+inputKey (EventKey (Char 'p') Down _ _) gstate@GameState{state = Paused}= gstate {state = Playing}
+
+inputKey (EventKey (SpecialKey KeySpace)Up _ _)  gstate@GameState{..} = gstate {bullets = spawnBullet (createbullet player) bullets }
 
 
 inputKey _ gstate = gstate

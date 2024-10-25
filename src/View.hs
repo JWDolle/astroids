@@ -11,22 +11,28 @@ import Model
 import Renderable
 import Enemy
 import BoundingBox
+import Projectile
 import Entity
 import Score
 
 view :: GameState -> IO Picture
-view gstate@(GameState _ _ _ _ GameOver) = do 
+view gstate@(GameState _ _ _ _ _ _ _ _ GameOver) = do 
     scores <- drawHighScores
     return $ pictures [scores, viewPure gstate]
 view gstate = return $ viewPure gstate
 
 viewPure :: GameState -> Picture
-viewPure gstate = pictures [pictures (map render (  enemies gstate)), 
+viewPure gstate = pictures [pictures (map render (comets gstate)), 
+                            
                             color red $ debugDirection (player gstate), 
-                            color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate, 
+                            
+                            color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate,
+                            
                             render (player gstate), 
+                            renderBullets (bullets gstate),
                             drawBoundingBox (bb (player gstate)), 
-                            pictures (map drawBoundingBox ( map getEnemyBB (enemies gstate)))]
+                            
+                            pictures (map drawBoundingBox ( map getBB (comets gstate))) ,pictures (map drawBoundingBox ( map getBB (bullets gstate)))]
 
 drawHighScores :: IO Picture
 drawHighScores = do
@@ -82,8 +88,7 @@ debugPlayer gstate = pictures [
     translate (-180) (-1120) textLine10,  -- First corner
     translate (-180) (-1320) textLine11,  -- Second corner
     translate (-180) (-1520) textLine12,  -- Third corner
-    translate (-180) (-1720) textLine13   -- Fourth corner
-    
+    translate (-180) (-1720) textLine14   -- Fourth corner
     ]
   where
     cplayer = player gstate  -- Extract the player from the game state
@@ -94,11 +99,11 @@ debugPlayer gstate = pictures [
     textLine1 = text $ "bbRotation: " ++ show (rotation bounding)
     textLine2 = text $ "Lives: " ++ show (pLives cplayer)
     textLine3 = text $ "Location: " ++ show (pLocation cplayer)
-    textLine4 = text $ "Direction: " ++ show (degrees(extractAngle (pMovedir cplayer)))
+    textLine4 = text $ "Direction: " ++ show (degrees (extractAngle (pMovedir cplayer)))
     textLine5 = text $ "Speed: " ++ show (pSpeed cplayer)
     textLine6 = text $ "Is Moving: " ++ show (isMoving cplayer)
     textLine7 = text $ "Speed: " ++ show (pSpeed cplayer)
-    textLine8 = text $ "BoundingBox Center: " ++ show ((centerX bounding, centerY bounding))
+    textLine8 = text $ "BoundingBox Center: " ++ show (centerX bounding, centerY bounding)
     textLine9 = text $ "Is Decelling: " ++ show (isDecelling cplayer)
 
     -- Text output for the bounding box corners
@@ -106,6 +111,11 @@ debugPlayer gstate = pictures [
     textLine11 = text $ "BB Corner 2: " ++ show (corners !! 1)  -- Second corner
     textLine12 = text $ "BB Corner 3: " ++ show (corners !! 2)  -- Third corner
     textLine13 = text $ "BB Corner 4: " ++ show (corners !! 3)  -- Fourth corner
+
+    -- Handle the bullet's prAlive field
+    textLine14 = if not (null (bullets gstate))
+                 then text $ "prAlive 1: " ++ show (length (bullets gstate))
+                 else text $ "prAlive 1: "++ show (length (bullets gstate))
 
 
 drawBoundingBox :: BoundingBox -> Picture
