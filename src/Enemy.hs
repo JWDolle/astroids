@@ -146,7 +146,7 @@ instance HasBounding Scatter where
 c1 :: Comet
 c1 = Comet {
     cName = "Test comet"
-    ,cLives = 5
+    ,cLives = 1
     ,cLocation = (-100, 100) -- center of the thing 
     ,cDirection = (1,0)
     ,cFacing = (1, 0)
