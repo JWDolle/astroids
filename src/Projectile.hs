@@ -35,9 +35,14 @@ type Bullets = [Projectile]
 createbullet ::  Player -> Projectile
 createbullet  p@Player{..} =
     let
-        dirOff = (fst pMovedir * playerWidth/2, snd pMovedir * playerHeigth/2)
+        dirOff | isDecelling = (fst pFacing * playerWidth/2, snd pFacing * playerHeigth/2)
+               | otherwise = (fst pMovedir * playerWidth/2, snd pMovedir * playerHeigth/2)
         ofset = (fst pLocation + (playerWidth/2) + fst dirOff - 5, snd pLocation + (playerHeigth/2) + snd dirOff -5)
         bulletLocation = ofset
+        newRotation | isDecelling = degrees (extractAngle pFacing) 
+                    | otherwise = degrees (extractAngle pMovedir)
+        direction   | isDecelling = pFacing
+                    | otherwise = pMovedir
     in   Projectile {
         prShape = color blue $ polygon [(0,0), (0,10), (10,10), (10,0)],
         prBB = BB {
@@ -45,10 +50,10 @@ createbullet  p@Player{..} =
             centerY = snd bulletLocation + 5,
             halfWidth = 5,
             halfHeigth = 5,
-            rotation = degrees (extractAngle pMovedir) -- Use degrees here for the display rotation
+            rotation = newRotation -- Use degrees here for the display rotation
         },
         prLocation = bulletLocation,
-        prDirection = pMovedir,
+        prDirection = direction,
         prAlive = True,   
         time = 0
 

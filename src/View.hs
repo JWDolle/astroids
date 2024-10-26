@@ -16,7 +16,7 @@ import Entity
 import Score
 
 view :: GameState -> IO Picture
-view gstate@(GameState _ _ _ _ _ _ _ _ GameOver ) = do 
+view gstate@(GameState _ _ _ _ _ _ _ _ _ GameOver) = do 
     scores <- drawHighScores
     return $ pictures [scores, viewPure gstate]
 view gstate = return $ viewPure gstate
@@ -71,7 +71,8 @@ drawHighScores = do
 debugDirection :: Player -> Picture
 debugDirection Player{..} =
     let (x, y) = pLocation         -- Get player location
-        (dx, dy) = pMovedir      -- Get direction vector
+        (dx, dy) | isDecelling = pFacing
+                 | otherwise = pMovedir-- Get direction vector
         directionEnd = (x + dx * 50, y + dy * 50)  -- Calculate end point
     in translate (playerWidth/2) (playerWidth/2) $ line [ (x, y), directionEnd ]  -- Draw a line from the location to the end point
 debugPlayer :: GameState -> Picture
@@ -88,7 +89,8 @@ debugPlayer gstate = pictures [
     translate (-180) (-1120) textLine10,  -- First corner
     translate (-180) (-1320) textLine11,  -- Second corner
     translate (-180) (-1520) textLine12,  -- Third corner
-    translate (-180) (-1720) textLine14   -- Fourth corner
+    translate (-180) (-1720) textLine14,   -- Fourth corner
+    translate (-180) (-1920) textLine15
     ]
   where
     cplayer = player gstate  -- Extract the player from the game state
@@ -116,6 +118,8 @@ debugPlayer gstate = pictures [
     textLine14 = if not (null (bullets gstate))
                  then text $ "prAlive 1: " ++ show (length (bullets gstate))
                  else text $ "prAlive 1: "++ show (length (bullets gstate))
+    
+    textLine15 = text $ "Number of Enemies: " ++ show (length (comets gstate))
 
 
 drawBoundingBox :: BoundingBox -> Picture

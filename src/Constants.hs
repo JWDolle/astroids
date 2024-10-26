@@ -28,12 +28,15 @@ rAngle = 7
 
 -- The starting random seed
 seed :: StdGen
-seed = randomSeed 1
+seed = randomSeed 10
 
 -- Filepath to the highscores file
 scoreFilePath :: FilePath
 scoreFilePath = "src/highscores.txt"
 
+-- Radius at which enemies can spawn from the player
+spawningRadius :: Float
+spawningRadius = 100
 
 bulletSpeed :: Float
 bulletSpeed = 4
@@ -58,3 +61,9 @@ bulletExistance = 1 * frameRate
 
 shootCooldown:: Int
 shootCooldown = 5
+
+accel:: Float
+accel = 0.1
+
+decel :: Float
+decel = 0.01
