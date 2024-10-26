@@ -8,7 +8,7 @@ import BoundingBox
 import Animation
 
 
-data Moving = STOP | MOVING
+
 
 playerWidth :: Float
 playerWidth = 30
@@ -24,7 +24,7 @@ data Player = Player {
                 , pLives :: Int
                 , pLocation :: Point
                 , pMovedir :: Vector
-                , pShootdir:: Vector
+                , pFacing :: Vector
                 , pShape :: Picture
                 , pSpeed :: Float
                 , isMoving :: Bool
@@ -44,11 +44,7 @@ maxSpeed = 5
 player1Local:: Point
 player1Local = (0,0)
 
-accel:: Float
-accel = 0.1
 
-decel :: Float
-decel = 0.1
 
 p1 :: Player
 p1 = Player {
@@ -56,7 +52,7 @@ p1 = Player {
                 , pLives = 3
                 , pLocation = player1Local -- center of the player
                 , pMovedir = (0,1)
-                , pShootdir = (0,1) -- this one we might need later for turning while decending
+                , pFacing = (0,1)
                 , pShape = color blue  $ polygon[(0,0), (30,0), (30,30), (0,30)]
                 , pSpeed = 0 
                 , isMoving = False    
@@ -76,47 +72,52 @@ instance HasBounding Player where
 instance Moveable Player where
     move p@Player {..} = p { 
         pLocation = (centerX newbb - 15, centerY newbb - 15),  -- Update the player's location
+        pMovedir = newMovedir,  -- Update movement direction when isMoving is true
         pSpeed = newSpd,        -- Update speed based on acceleration or deceleration
         bb = newbb,
-        --animation = updateAnimation (animation),
         isDecelling = newIsDecelling
     }
         where 
+            -- Update speed based on moving or decelerating
             newSpd  | isMoving     = min (pSpeed + accel) maxSpeed  -- Accelerate to max speed
                     | isDecelling  = max (pSpeed - decel) 0  -- Decelerate
                     | otherwise    = pSpeed  -- Maintain current speed
 
-       
-            adjusted = (fst pLocation + fst pMovedir * newSpd, 
-                        snd pLocation + snd pMovedir * newSpd)
+            -- Set pMovedir to match pFacing if isMoving is true
+            newMovedir = if isMoving then normalize pFacing else pMovedir
+
+            -- Adjust position only based on initial movement direction when decelerating
+            adjusted = if isDecelling
+                          then (fst pLocation + fst pMovedir * newSpd, 
+                                snd pLocation + snd pMovedir * newSpd)
+                          else (fst pLocation + fst newMovedir * newSpd, 
+                                snd pLocation + snd newMovedir * newSpd)
 
             (dx, dy) = (fst adjusted - fst pLocation, snd adjusted - snd pLocation)
-            newRotation = degrees $ atan2 (snd pMovedir) (fst pMovedir)
-            newbb | isMoving     = updateBoundingBox (dx, dy) newRotation  bb  -- Move and rotate
-                  | isDecelling  = updateBoundingBox (dx, dy) newRotation  bb  -- Decelerate and rotate
-                  | otherwise    = bb  -- No movement, keep the bounding box unchanged  -- Maintain current speed
             
+            -- Rotate the bounding box based on `pFacing` angle regardless of movement state
+            newRotation = degrees $ extractAngle $ normalize pFacing
+            newbb = updateBoundingBox (dx, dy) newRotation bb
+
+            -- Check if we should keep decelerating
             newIsDecelling | newSpd > 0 = True
                            | otherwise = False
+
     rotate_ p@Player{..} = p {
-        pMovedir = normalized,  -- Update player's direction
-        bb = updatedBB        -- Update the player's bounding box
+        pFacing = normalized,  -- Update player's facing direction
+        pMovedir = if isDecelling then pMovedir else normalized,  -- Only change direction if not decelerating
+        bb = updatedBB        -- Update the player's bounding box rotation
     }
         where
-            -- Define the angle of rotation (for example, 5 degrees)
-            angleRadians = radians rAngle  -- Example fixed rotation angle of 5 degrees
-            -- Extract current angle from pMovedir
-            cAngle = extractAngle pMovedir
-            -- Adjust angle based on rotation direction (left or right)
+            angleRadians = radians rAngle  -- Fixed rotation angle (for example, 5 degrees)
+            cAngle = extractAngle pFacing
             nAngle 
                 | isRotatingL = cAngle - angleRadians  -- Anti-clockwise
                 | isRotatingR = cAngle + angleRadians  -- Clockwise
                 | otherwise   = cAngle  -- No rotation
-            -- Compute new direction vector using cos and sin of the new angle
+
             adjusted = (cos nAngle, sin nAngle)
             normalized = normalize adjusted
-            -- Update the bounding box with the new rotation
+
             degAngle = degrees (extractAngle normalized)
-            updatedBB = updateBoundingBox (0,0) degAngle  bb
-
-
+            updatedBB = updateBoundingBox (0,0) degAngle bb  -- Rotate bounding box continuously

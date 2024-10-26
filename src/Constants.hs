@@ -61,3 +61,9 @@ bulletExistance = 1 * frameRate
 
 shootCooldown:: Int
 shootCooldown = 5
+
+accel:: Float
+accel = 0.1
+
+decel :: Float
+decel = 0.01

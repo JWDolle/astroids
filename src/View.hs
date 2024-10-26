@@ -71,7 +71,8 @@ drawHighScores = do
 debugDirection :: Player -> Picture
 debugDirection Player{..} =
     let (x, y) = pLocation         -- Get player location
-        (dx, dy) = pMovedir      -- Get direction vector
+        (dx, dy) | isDecelling = pFacing
+                 | otherwise = pMovedir-- Get direction vector
         directionEnd = (x + dx * 50, y + dy * 50)  -- Calculate end point
     in translate (playerWidth/2) (playerWidth/2) $ line [ (x, y), directionEnd ]  -- Draw a line from the location to the end point
 debugPlayer :: GameState -> Picture
