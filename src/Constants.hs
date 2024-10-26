@@ -69,4 +69,4 @@ decel :: Float
 decel = 0.01
 
 secToframes:: Int -> Int
-secToframse secs = secs * frameRate
+secToframes secs = secs * frameRate
