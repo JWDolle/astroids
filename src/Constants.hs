@@ -34,7 +34,9 @@ seed = randomSeed 10
 scoreFilePath :: FilePath
 scoreFilePath = "src/highscores.txt"
 
-
+-- Radius at which enemies can spawn from the player
+spawningRadius :: Float
+spawningRadius = 100
 
 bulletSpeed :: Float
 bulletSpeed = 4
