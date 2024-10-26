@@ -28,7 +28,7 @@ rAngle = 7
 
 -- The starting random seed
 seed :: StdGen
-seed = randomSeed 10
+seed = randomSeed 50
 
 -- Filepath to the highscores file
 scoreFilePath :: FilePath

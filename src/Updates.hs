@@ -48,8 +48,8 @@ spawnEnemy (Comet n liv loc dir f sh sp ro bb) gState@(GameState i e p c u s l b
         randomDirectionY = randomRange (0,2) (snd randomDirectionX)
 
         newbb = bb{
-            centerX = (fromIntegral (fst randomLocationX)) - ((fromIntegral screenSize) / 2),
-            centerY = (fromIntegral (fst randomLocationY)) - ((fromIntegral screenSize) / 2)
+            centerX = fst x,
+            centerY = fst y
         }
 
         newCom = (Comet n liv (fst x, fst y) ((fst randomDirectionX) - 1, (fst randomDirectionY) - 1) f sh sp ro newbb)
