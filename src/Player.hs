@@ -94,6 +94,10 @@ instance Moveable Player where
                                 snd pLocation + snd newMovedir * newSpd)
 
             (dx, dy) = (fst adjusted - fst pLocation, snd adjusted - snd pLocation)
+            newRotation = degrees $ extractAngle pMovedir
+            newbb | isMoving     = updateBoundingBox (dx, dy) newRotation  bb  -- Move and rotate
+                  | isDecelling  = updateBoundingBox (dx, dy) newRotation  bb  -- Decelerate and rotate
+                  | otherwise    = bb  -- No movement, keep the bounding box unchanged  -- Maintain current speed
             
             -- Rotate the bounding box based on `pFacing` angle regardless of movement state
             newRotation = degrees $ extractAngle $ normalize pFacing
