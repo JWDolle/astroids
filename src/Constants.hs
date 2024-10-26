@@ -57,7 +57,7 @@ frameRate :: Int
 frameRate = 60
 
 bulletExistance :: Int 
-bulletExistance = 1 * frameRate
+bulletExistance = secToframes 2 -- meaning it will exist for 2 seconds
 
 shootCooldown:: Int
 shootCooldown = 5
@@ -67,3 +67,6 @@ accel = 0.1
 
 decel :: Float
 decel = 0.01
+
+secToframes:: Int -> Int
+secToframse secs = secs * frameRate
