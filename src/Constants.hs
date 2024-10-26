@@ -28,11 +28,12 @@ rAngle = 7
 
 -- The starting random seed
 seed :: StdGen
-seed = randomSeed 100
+seed = randomSeed 10
 
 -- Filepath to the highscores file
 scoreFilePath :: FilePath
 scoreFilePath = "src/highscores.txt"
+
 
 
 bulletSpeed :: Float
