@@ -7,7 +7,7 @@ import Graphics.Gloss
 import Entity
 import Constants
 import BoundingBox
-
+import Random
 
 
 ---Data types
@@ -138,6 +138,16 @@ instance HasBounding Scatter where
     getBB s@Scatter{..} = sBB
  
 
+-- spawnEnemy :: Enemy -> GameState -> GameState
+-- spawnEnemy (Comet n l loc dir f s sp r bb) gState@(GameState i e p c u s l b r Playing) = (GameState i e p (newCom:c) u s l b (snd randomDirectionY) Playing)
+--     where
+--         randomLocationX = randomRange (0,screenSize) r
+--         randomLocationY = randomRange (0,screenSize) (snd randomLocationX)
+
+--         randomDirectionX = randomRange (0,2) (snd randomLocationY)
+--         randomDirectionY = randomRange (0,2) (snd randomDirectionX)
+
+--         newCom = (Comet n l ((fst randomLocationX) - ((fromIntegral screenSize) / 2), (fst randomLocationY) - ((fromIntegral screenSize) / 2)) ((fst randomDirectionX) - 1, (fst randomDirectionY) - 1) f s sp r bb)
 
 
 
