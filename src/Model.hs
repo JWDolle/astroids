@@ -13,8 +13,7 @@ data InfoToShow = ShowNothing
                 | ShowAChar   Char
 data State = Playing | Paused | GameOver
 
-nO_SECS_BETWEEN_CYCLES :: Float
-nO_SECS_BETWEEN_CYCLES = 1
+
 
 data GameState = GameState {
                    infoToShow  :: InfoToShow
@@ -31,4 +30,4 @@ data GameState = GameState {
                  }
 
 initialState ::  GameState
-initialState  = GameState ShowNothing 0 p1 [c1] [] [] [] [] seed Playing 
+initialState  = GameState ShowNothing 0 p1 [] [] [] [] [] seed Playing 

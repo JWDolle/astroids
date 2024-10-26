@@ -35,6 +35,28 @@ updateEnemies gstate@GameState{..} = if length comets > 2 then gstate{comets = m
                                                   scatters = map (\x -> rotate_ (move x))scatters,
                                                   ufos = map (\x -> move x) ufos} else spawnEnemy c1 gstate
 
+
+
+
+updatePlayer:: GameState -> GameState
+updatePlayer gstate@(GameState _ _ p _ _ _ _ _ _ _)= 
+    let
+        movedPlayer = updateMovementPlayer p gstate
+        rotatedPlayer = updateRotationPlayer (player movedPlayer) movedPlayer
+        updatedPlayer = rotatedPlayer
+    in  updatedPlayer
+
+updateBullets:: Float -> GameState -> GameState
+updateBullets secs gstate@(GameState _ _ _ _ _ _ _ b _ _) =
+    let 
+        timedOut = filterProjectiles (map (\x -> outOfTime x secs ) b)
+        movedBullets = map move timedOut
+        updatedBullets = gstate{ bullets = filterProjectiles movedBullets }
+    in  updatedBullets
+
+
+---------------------- RANDOM SPAWNING OF THE ENMEY -------------
+
 spawnEnemy :: Comet -> GameState -> GameState
 spawnEnemy (Comet n liv loc dir f sh sp ro bb) gState@(GameState i e p c u s l b r Playing) = (GameState i e p (newCom:c) u s l b (snd y) Playing)
     where
@@ -61,27 +83,5 @@ validSpawn e p rand | withinWrap e p = validSpawn (fromIntegral (fst newRand)) p
         newRand = randomRange (0,screenSize) rand
         withinWrap :: Float -> Float -> Bool
         withinWrap a b = (a + spawningRadius > b && a - spawningRadius < b) || (a + spawningRadius > b + fromIntegral screenSize && a - spawningRadius < b + fromIntegral screenSize) || (a + spawningRadius > b - fromIntegral screenSize && a - spawningRadius < b - fromIntegral screenSize)
-
-
-updatePlayer:: GameState -> GameState
-updatePlayer gstate@(GameState _ _ p _ _ _ _ _ _ _)= 
-    let
-        movedPlayer = updateMovementPlayer p gstate
-        rotatedPlayer = updateRotationPlayer (player movedPlayer) movedPlayer
-        updatedPlayer = rotatedPlayer
-    in  updatedPlayer
-
-updateBullets:: Float -> GameState -> GameState
-updateBullets secs gstate@(GameState _ _ _ _ _ _ _ b _ _) =
-    let 
-        timedOut = filterProjectiles (map (\x -> outOfTime x secs ) b)
-        movedBullets = map move timedOut
-        updatedBullets = gstate{ bullets = filterProjectiles movedBullets }
-    in  updatedBullets
-
-
-
-
-
 
  

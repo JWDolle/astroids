@@ -60,18 +60,18 @@ instance Moveable Comet where
             -- Update the bounding box based on movement
             updatedBB = updateBoundingBox (dx, dy) (rotation cBB)  cBB
 
-    rotate_ c@Comet {..} = c {
-        cFacing = normalized,
-        cBB = updatedBB
-    }
-        where
-            angleRadians = radians c_rAngle
-            cAngle = extractAngle cFacing
-            nAngle = if cRotateL then cAngle - angleRadians else cAngle + angleRadians
-            adjusted = (cos nAngle, sin nAngle)
-            normalized = normalize adjusted
-         -- Update the bounding box with new rotation
-            updatedBB = updateBoundingBox (0, 0) (degrees nAngle)  cBB
+    rotate_ c@Comet {..} = c --{
+    --     cFacing = normalized,
+    --     cBB = updatedBB
+    -- }
+    --     where
+    --         angleRadians = radians c_rAngle
+    --         cAngle = extractAngle cFacing
+    --         nAngle = if cRotateL then cAngle - angleRadians else cAngle + angleRadians
+    --         adjusted = (cos nAngle, sin nAngle)
+    --         normalized = normalize adjusted
+    --      -- Update the bounding box with new rotation
+    --         updatedBB = updateBoundingBox (0, 0) (degrees nAngle)  cBB
      
 
 instance Moveable  UFO where
@@ -87,18 +87,18 @@ instance Moveable  UFO where
 
             -- Update the bounding box based on movement
             updatedBB = updateBoundingBox (dx, dy) (rotation uBB)  uBB
-    rotate_ u@UFO {..} = u {
-        uDirection = normalized,
-        uBB = updatedBB
-    }
-        where
-            angleRadians = radians 10
-            uAngle = extractAngle uDirection
-            nAngle = uAngle + angleRadians
-            adjusted = (cos nAngle, sin nAngle)
-         -- Update the bounding box with new rotation
-            normalized = normalize adjusted
-            updatedBB = updateBoundingBox (0, 0) (degrees nAngle)  uBB
+    rotate_ u@UFO {..} = u --{
+    --     uDirection = normalized,
+    --     uBB = updatedBB
+    -- }
+    --     where
+    --         angleRadians = radians 10
+    --         uAngle = extractAngle uDirection
+    --         nAngle = uAngle + angleRadians
+    --         adjusted = (cos nAngle, sin nAngle)
+    --      -- Update the bounding box with new rotation
+    --         normalized = normalize adjusted
+    --      updatedBB = updateBoundingBox (0, 0) (degrees nAngle)  uBB
 
 instance Moveable Scatter where
     move s@Scatter {..} =  s {
