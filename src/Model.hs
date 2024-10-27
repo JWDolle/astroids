@@ -1,5 +1,6 @@
 -- | This module contains the data types
 --   which represent the state of the game
+{-# LANGUAGE RecordWildCards #-}
 module Model where
 import Entity
 import Player
@@ -26,9 +27,10 @@ data GameState = GameState {
                  , lasers :: Lasers
                  , bullets :: Bullets
                  , random :: StdGen
+                 , sprites :: Sprites
                  , state :: State
-                 --, sprites :: Sprites
+                 
                  }
 
-initialState ::  GameState
-initialState  = GameState ShowNothing 0 p1 [c1] [] [] [] [] seed Playing 
+initialState :: Sprites -> GameState
+initialState sprites@Sprites{..} = GameState ShowNothing 0 p1 [c1] [] [] [] [] seed sprites Playing 

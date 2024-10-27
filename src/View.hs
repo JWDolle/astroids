@@ -16,7 +16,7 @@ import Entity
 import Score
 
 view :: GameState -> IO Picture
-view gstate@(GameState _ _ _ _ _ _ _ _ _ GameOver) = do 
+view gstate@(GameState _ _ _ _ _ _ _ _ _ _ GameOver) = do 
     scores <- drawHighScores
     return $ pictures [scores, viewPure gstate]
 view gstate = return $ viewPure gstate
