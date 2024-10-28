@@ -15,7 +15,7 @@ import Animation
 class Renderable a where
     render :: a -> Picture
 transformations :: Point -> Vector -> Float -> Float -> Picture -> Picture
-transformations local@(x,y) dir cX cY pic= translate (x + cX) (y + cY)
+transformations local@(x,y) dir cX cY pic= translate (x ) (y )
                                            . rotate nAngle
                                            . translate (-cX) (-cY)
                                            $ pic

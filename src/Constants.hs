@@ -70,3 +70,4 @@ decel = 0.01
 
 secToframes:: Int -> Int
 secToframes secs = secs * frameRate
+

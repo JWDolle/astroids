@@ -11,10 +11,10 @@ import Animation
 
 
 playerWidth :: Float
-playerWidth = 30
+playerWidth = 32
 
 playerHeigth :: Float
-playerHeigth= 30
+playerHeigth= 32
 
 
 
@@ -53,7 +53,7 @@ p1 = Player {
                 , pLocation = player1Local -- center of the player
                 , pMovedir = (0,1)
                 , pFacing = (0,1)
-                , pShape = color blue  $ polygon[(0,0), (30,0), (30,30), (0,30)]
+                , pShape = undefined
                 , pSpeed = 0 
                 , isMoving = False    
                 , isRotatingL = False    
@@ -71,7 +71,7 @@ instance HasBounding Player where
 -- moveable objects are things that can rotate and move 
 instance Moveable Player where
     move p@Player {..} = p { 
-        pLocation = (centerX newbb - 15, centerY newbb - 15),  -- Update the player's location
+        pLocation = (centerX newbb - 16, centerY newbb - 16),  -- Update the player's location
         pMovedir = newMovedir,  -- Update movement direction when isMoving is true
         pSpeed = newSpd,        -- Update speed based on acceleration or deceleration
         bb = newbb,

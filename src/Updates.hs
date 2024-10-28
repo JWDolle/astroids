@@ -36,7 +36,7 @@ updateEnemies gstate@GameState{..} = if length comets > 2 then gstate{comets = m
                                                   ufos = map (\x -> move x) ufos} else spawnEnemy c1 gstate
 
 spawnEnemy :: Comet -> GameState -> GameState
-spawnEnemy (Comet n liv loc dir f sh sp ro bb) gState@(GameState i e p c u s l b r Playing) = (GameState i e p (newCom:c) u s l b (snd y) Playing)
+spawnEnemy (Comet n liv loc dir f sh sp ro bb) gState@(GameState i e p c u s l b r spr Playing) = (GameState i e p (newCom:c) u s l b (snd y)  spr Playing)
     where
 
         randomLocationX = randomRange (0,screenSize) r
@@ -64,7 +64,7 @@ validSpawn e p rand | withinWrap e p = validSpawn (fromIntegral (fst newRand)) p
 
 
 updatePlayer:: GameState -> GameState
-updatePlayer gstate@(GameState _ _ p _ _ _ _ _ _ _)= 
+updatePlayer gstate@(GameState _ _ p _ _ _ _ _ _ _ _)= 
     let
         movedPlayer = updateMovementPlayer p gstate
         rotatedPlayer = updateRotationPlayer (player movedPlayer) movedPlayer
@@ -72,7 +72,7 @@ updatePlayer gstate@(GameState _ _ p _ _ _ _ _ _ _)=
     in  updatedPlayer
 
 updateBullets:: Float -> GameState -> GameState
-updateBullets secs gstate@(GameState _ _ _ _ _ _ _ b _ _) =
+updateBullets secs gstate@(GameState _ _ _ _ _ _ _ b _ _ _) =
     let 
         timedOut = filterProjectiles (map (\x -> outOfTime x secs ) b)
         movedBullets = map move timedOut
