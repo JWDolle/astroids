@@ -8,6 +8,7 @@ import Player
 import Enemy
 import BoundingBox
 import Projectile
+import Button
 import Animation
 
 
@@ -30,6 +31,9 @@ instance Renderable Comet where
 
 instance Renderable Projectile where
     render projectile@Projectile {..} = transformations prLocation prDirection 5 5 prShape
+
+instance Renderable Button where
+    render button@Button {..} = transformations bLocation (0,0) 50 25 bShape
 
 renderBullets :: Bullets -> Picture
 renderBullets b = pictures $ map render b

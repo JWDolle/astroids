@@ -6,18 +6,19 @@ import Player
 import Projectile
 import Sprites
 import Enemy
+import Button
 import System.Random
 import Constants
 data InfoToShow = ShowNothing
                 | ShowANumber Int
                 | ShowAChar   Char
-data State = Playing | Paused | GameOver
+data State = Playing | Paused | GameOver | Menu
 
 nO_SECS_BETWEEN_CYCLES :: Float
 nO_SECS_BETWEEN_CYCLES = 1
 
 data GameState = GameState {
-                   infoToShow  :: InfoToShow
+                   button  :: Button
                  , elapsedTime :: Float
                  , player :: Player
                  , comets :: [Comet]
@@ -31,4 +32,4 @@ data GameState = GameState {
                  }
 
 initialState ::  GameState
-initialState  = GameState ShowNothing 0 p1 [c1] [] [] [] [] seed Playing 
+initialState  = GameState playButton 0 p1 [c1] [] [] [] [] seed Menu 

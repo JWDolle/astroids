@@ -12,6 +12,7 @@ import Renderable
 import Enemy
 import BoundingBox
 import Projectile
+import Button
 import Entity
 import Score
 
@@ -22,17 +23,18 @@ view gstate@(GameState _ _ _ _ _ _ _ _ _ GameOver) = do
 view gstate = return $ viewPure gstate
 
 viewPure :: GameState -> Picture
-viewPure gstate = pictures [pictures (map render (comets gstate)), 
+viewPure gstate@GameState{state = Playing} = pictures [pictures (map render (comets gstate)), 
                             
-                            color red $ debugDirection (player gstate), 
-                            
-                            color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate,
-                            
-                            render (player gstate), 
-                            renderBullets (bullets gstate),
-                            drawBoundingBox (bb (player gstate)), 
-                            
-                            pictures (map drawBoundingBox ( map getBB (comets gstate))) ,pictures (map drawBoundingBox ( map getBB (bullets gstate)))]
+                                            color red $ debugDirection (player gstate), 
+                                            
+                                            color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate,
+                                            
+                                            render (player gstate), 
+                                            renderBullets (bullets gstate),
+                                            drawBoundingBox (bb (player gstate)), 
+                                            
+                                            pictures (map drawBoundingBox ( map getBB (comets gstate))) ,pictures (map drawBoundingBox ( map getBB (bullets gstate)))]
+viewPure gstate@GameState{state = Menu}   = pictures [ color red $ render $ button gstate]
 
 drawHighScores :: IO Picture
 drawHighScores = do

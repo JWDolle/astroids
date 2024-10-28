@@ -6,10 +6,12 @@ module Controller where
 import Pipeline
 import Model
 import Player
+import Button
 import Projectile
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
+import Graphics.Gloss.Interface.IO.Game (Key(MouseButton))
 
 
 -- | Handle one iteration of the game
@@ -20,6 +22,7 @@ step secs gstate@GameState{..} = return $ stepPure secs gstate
   
 stepPure :: Float -> GameState -> GameState
 stepPure secs gstate@GameState{state = Playing} = pipeline1 secs gstate
+stepPure secs gstate@GameState{state = Menu} = gstate
 
 
 stepPure sec gstate@GameState{state = Paused} = gstate
@@ -48,6 +51,13 @@ inputKey (EventKey (Char 'p') Down _ _) gstate@GameState{state = Playing}= gstat
 inputKey (EventKey (Char 'p') Down _ _) gstate@GameState{state = Paused}= gstate {state = Playing}
 
 inputKey (EventKey (SpecialKey KeySpace)Up _ _)  gstate@GameState{..} = gstate {bullets = spawnBullet (createbullet player) bullets }
+inputKey (EventKey (MouseButton LeftButton)Down _ (x,y))  gstate@GameState{state = Menu} = gstate {button = nbutton}
+    where 
+
+        nbutton | whithinButton (x,y) (bLocation b) playWidth playHeigth = b{ bShape = color blue $ bShape b}
+                | otherwise = b
+        b = button gstate
+
 
 
 inputKey _ gstate = gstate
