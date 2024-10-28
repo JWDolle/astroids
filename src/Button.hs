@@ -22,10 +22,9 @@ playButton  = Button{ bShape = shape, bLocation = (0,0)}
         shape =  polygon[(0,0), (0,50), (100,50), (100,0)]
 
 whithinButton:: Point -> Point ->  Float -> Float -> Bool
-whithinButton (x,y) (bx, by) w h = abs(x - bx) < w && abs(y - by) < h
+whithinButton (x,y) (bx, by) w h = x < (bx + w) && x > bx && y < (by + h) && y > by
 
 exitButton:: Button
 exitButton = Button {bShape = e, bLocation = (270, 340)}
     where
         e = color green $ polygon [(0,0),(32,0),(32,32),(0,32)]
-             

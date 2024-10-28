@@ -31,7 +31,7 @@ viewPure gstate@GameState{state = Playing} = pictures [pictures (map render (com
                                             
                                             render (player gstate), 
                                             renderBullets (bullets gstate),
-                                            drawBoundingBox (bb (player gstate)), 
+                                            drawBoundingBox (bb (player gstate)), pictures (map render(scatters gstate)), 
                                             
                                             pictures (map drawBoundingBox ( map getBB (comets gstate))) ,pictures (map drawBoundingBox ( map getBB (bullets gstate))), render exitButton]
 viewPure gstate@GameState{state = Menu}   = pictures [ color red $ render playButton]

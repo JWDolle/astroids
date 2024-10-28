@@ -29,11 +29,14 @@ instance Renderable Player where
 instance Renderable Comet where
     render comet@Comet{..} = transformations cLocation cFacing (halfWidth cBB) (halfHeigth cBB) cShape
 
+instance Renderable Scatter where
+    render scatter@Scatter{..} = transformations sLocation sFacing (halfWidth sBB) (halfHeigth sBB) sShape
+
 instance Renderable Projectile where
     render projectile@Projectile {..} = transformations prLocation prDirection 5 5 prShape
 
 instance Renderable Button where
-    render button@Button {..} = transformations bLocation (0,0) 50 25 bShape
+    render button@Button {..} = transformations bLocation (0,0) (playWidth/2) (playHeigth/2) bShape
 
 renderBullets :: Bullets -> Picture
 renderBullets b = pictures $ map render b

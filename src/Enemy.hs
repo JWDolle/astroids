@@ -11,7 +11,15 @@ import Random
 
 
 ---Data types
+cometWidth :: Float
+cometWidth = 30
+cometHeigth :: Float
+cometHeigth = 30
 
+scatterWidth :: Float
+scatterWidth = 60
+scatterHeigth:: Float
+scatterHeigth = 60
 
     
 data Scatter = Scatter { --become small comets
@@ -19,7 +27,9 @@ data Scatter = Scatter { --become small comets
     ,sLives :: Int
     ,sLocation :: Point
     ,sDirection :: Vector
-    ,sSHape:: Picture
+    ,sFacing :: Vector
+    ,sSpeed :: Float
+    ,sShape:: Picture
     ,sBB :: BoundingBox
 }
 
@@ -33,22 +43,21 @@ data UFO = UFO { --shoots the player
 
 }
 data Comet = Comet { -- no intelligence
-    cName:: String
-    ,cLives :: Int
+    cLives :: Int
     ,cLocation :: Point
     ,cDirection :: Vector
     ,cFacing :: Vector
     ,cShape :: Picture
     ,cSpeed :: Float
-    ,cRotateL :: Bool
     ,cBB :: BoundingBox
-
 }
+
+
 
 
 instance Moveable Comet where
     move c@Comet{..} =  c { 
-        cLocation = (centerX updatedBB - 30, centerY updatedBB - 30),
+        cLocation = (centerX updatedBB - cometWidth/2 , centerY updatedBB - cometHeigth/2),
         cBB = updatedBB
     }
         where 
@@ -67,7 +76,7 @@ instance Moveable Comet where
         where
             angleRadians = radians c_rAngle
             cAngle = extractAngle cFacing
-            nAngle = if cRotateL then cAngle - angleRadians else cAngle + angleRadians
+            nAngle =  cAngle + angleRadians
             adjusted = (cos nAngle, sin nAngle)
             normalized = normalize adjusted
          -- Update the bounding box with new rotation
@@ -76,7 +85,7 @@ instance Moveable Comet where
 
 instance Moveable  UFO where
     move  u@UFO {..} = u {
-        uLocation = adjusted,
+        uLocation = (centerX updatedBB - scatterWidth/2 , centerY updatedBB - scatterHeigth/2),
         uBB = updatedBB
     }
         where
@@ -102,12 +111,12 @@ instance Moveable  UFO where
 
 instance Moveable Scatter where
     move s@Scatter {..} =  s {
-        sLocation = adjusted,
+        sLocation = (centerX updatedBB - scatterWidth/2 , centerY updatedBB - scatterHeigth/2),
         sBB = updatedBB
     }
         where
-            adjusted = (fst sLocation + fst sDirection * 1.5,
-                        snd sLocation + snd sDirection * 1.5)
+            adjusted = (fst sLocation + fst sDirection * sSpeed,
+                        snd sLocation + snd sDirection * sSpeed)
               -- Compute the change in position
             (dx, dy) = (fst adjusted - fst sLocation, snd adjusted - snd sLocation)
 
@@ -116,12 +125,12 @@ instance Moveable Scatter where
 
  
     rotate_ s@Scatter {..} = s { 
-        sDirection = normalized,
+        sFacing = normalized,
         sBB = updatedBB
     }
         where
             angleRadians = radians 5
-            sAngle = extractAngle sDirection
+            sAngle = extractAngle sFacing
             nAngle = sAngle + angleRadians
             adjusted = (cos nAngle, sin nAngle)
             normalized = normalize adjusted
@@ -155,14 +164,32 @@ instance HasBounding Scatter where
 
 c1 :: Comet
 c1 = Comet {
-    cName = "Test comet"
-    ,cLives = 1
-    ,cLocation = (-100, 100) -- center of the thing 
+    cLives = 1
+    ,cLocation = (0,0) -- center of the thing
     ,cDirection = (1,0)
     ,cFacing = (1, 0)
-    ,cShape = color red $ polygon [(0,0), (0,60), (60,60),(60,0)]
+    ,cShape = color yellow $ polygon [(0,0), (0,30), (30,30), (30,0)]
     ,cSpeed = 1
-    ,cRotateL = True
-    ,cBB = BB{ centerX = -70, centerY = 130, halfWidth = 30, halfHeigth = 30, rotation = 90}
+    ,cBB = BB { centerX = fst (cLocation c1) + 15  -- Offset is now half of 30
+              , centerY = snd (cLocation c1) + 15  -- Offset is now half of 30
+              , halfWidth = 15                     -- Half-width matches half the new size
+              , halfHeigth = 15                    -- Half-height matches half the new size
+              , rotation = 90
+              }
+}
+
+scat:: Scatter
+scat = Scatter {
+    sName = "Test comet"
+    ,sLives = 1
+    ,sLocation = (-100, 100) -- center of the thing 
+    ,sDirection = (1,0)
+    ,sFacing = (1, 0)
+    ,sShape = color red $ polygon [(0,0), (0,60), (60,60),(60,0)]
+    ,sSpeed = 1
+    ,sBB = BB{ centerX = -70, centerY = 130, halfWidth = 30, halfHeigth = 30, rotation = 90}
     
 }
+
+
+

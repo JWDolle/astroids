@@ -36,7 +36,7 @@ updateEnemies gstate@GameState{..} = if length comets > 2 then gstate{comets = m
                                                   ufos = map (\x -> move x) ufos} else spawnEnemy c1 gstate
 
 spawnEnemy :: Comet -> GameState -> GameState
-spawnEnemy (Comet n liv loc dir f sh sp ro bb) gState@(GameState i e p c u s l b r Playing) = (GameState i e p (newCom:c) u s l b (snd y) Playing)
+spawnEnemy (Comet  liv loc dir f sh sp  bb) gState@(GameState i e p c u s l b r Playing) = (GameState i e p (newCom:c) u s l b (snd y) Playing)
     where
 
         randomLocationX = randomRange (0,screenSize) r
@@ -52,7 +52,7 @@ spawnEnemy (Comet n liv loc dir f sh sp ro bb) gState@(GameState i e p c u s l b
             centerY = fst y
         }
 
-        newCom = (Comet n liv (fst x, fst y) ((fst randomDirectionX) - 1, (fst randomDirectionY) - 1) f sh sp ro newbb)
+        newCom = (Comet  liv (fst x, fst y) ((fst randomDirectionX) - 1, (fst randomDirectionY) - 1) f sh sp newbb)
 
 validSpawn :: Float -> Float -> StdGen -> (Float, StdGen)
 validSpawn e p rand | withinWrap e p = validSpawn (fromIntegral (fst newRand)) p (snd newRand)

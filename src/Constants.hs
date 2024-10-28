@@ -44,14 +44,7 @@ bulletSpeed = 4
 epsilon :: Float
 epsilon = 1e-6  -- You can adjust this value as needed
 
--- Function to check if a float is approximately zero
-isApproximatelyZero :: Float -> Bool
-isApproximatelyZero x = abs x < epsilon
 
-normalize :: (Float, Float) -> (Float, Float)
-normalize (x, y) = 
-    let len = sqrt (x^2 + y^2)
-    in if len == 0 then (0, 0) else (x / len, y / len)
 
 frameRate :: Int
 frameRate = 60
@@ -67,6 +60,33 @@ accel = 0.1
 
 decel :: Float
 decel = 0.01
+
+
+
+radians:: Float -> Float
+radians d = d * (pi/180)
+
+degrees :: Float -> Float
+degrees r =  r * (180/pi)
+
+extractAngle :: Vector -> Float
+extractAngle v = atan2 (snd v) (fst v)
+
+-- Function to check if a float is approximately zero
+isApproximatelyZero :: Float -> Bool
+isApproximatelyZero x = abs x < epsilon
+
+normalize :: (Float, Float) -> (Float, Float)
+normalize (x, y) = 
+    let len = sqrt (x^2 + y^2)
+    in if len == 0 then (0, 0) else (x / len, y / len)
+
+rotateVector :: (Float, Float) -> Float -> (Float, Float)
+rotateVector (x, y) angleDeg =
+    let angleRad = radians (degrees angleDeg)
+        cosA = cos angleRad
+        sinA = sin angleRad
+    in (x * cosA - y * sinA, x * sinA + y * cosA)
 
 secToframes:: Int -> Int
 secToframes secs = secs * frameRate
