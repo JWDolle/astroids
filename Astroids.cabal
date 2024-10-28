@@ -28,4 +28,5 @@ executable Astroids
                      , Projectile
                      , Random
                      , Score
+                     , Button
   default-language:    Haskell2010
