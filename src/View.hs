@@ -33,8 +33,9 @@ viewPure gstate@GameState{state = Playing} = pictures [pictures (map render (com
                                             renderBullets (bullets gstate),
                                             drawBoundingBox (bb (player gstate)), 
                                             
-                                            pictures (map drawBoundingBox ( map getBB (comets gstate))) ,pictures (map drawBoundingBox ( map getBB (bullets gstate)))]
-viewPure gstate@GameState{state = Menu}   = pictures [ color red $ render $ button gstate]
+                                            pictures (map drawBoundingBox ( map getBB (comets gstate))) ,pictures (map drawBoundingBox ( map getBB (bullets gstate))), render exitButton]
+viewPure gstate@GameState{state = Menu}   = pictures [ color red $ render playButton]
+viewPure gstate@GameState{state = GameOver} = Blank
 
 drawHighScores :: IO Picture
 drawHighScores = do

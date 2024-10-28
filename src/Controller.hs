@@ -51,13 +51,17 @@ inputKey (EventKey (Char 'p') Down _ _) gstate@GameState{state = Playing}= gstat
 inputKey (EventKey (Char 'p') Down _ _) gstate@GameState{state = Paused}= gstate {state = Playing}
 
 inputKey (EventKey (SpecialKey KeySpace)Up _ _)  gstate@GameState{..} = gstate {bullets = spawnBullet (createbullet player) bullets }
-inputKey (EventKey (MouseButton LeftButton)Down _ (x,y))  gstate@GameState{state = Menu} = gstate {button = nbutton}
+inputKey (EventKey (MouseButton LeftButton)Down _ (x,y))  gstate@GameState{state = Menu} = newState
     where 
 
-        nbutton | whithinButton (x,y) (bLocation b) playWidth playHeigth = b{ bShape = color blue $ bShape b}
-                | otherwise = b
-        b = button gstate
+        newState | whithinButton (x,y) (bLocation playButton) playWidth playHeigth = gstate {state = Playing}
+                 | otherwise = gstate
 
+inputKey (EventKey (MouseButton LeftButton)Down _ (x,y))  gstate@GameState{state = Playing} = newState
+    where 
+
+        newState | whithinButton (x,y) (bLocation exitButton) exitWidth exitHeigth = gstate {state = GameOver}
+                 | otherwise = gstate
 
 
 inputKey _ gstate = gstate
