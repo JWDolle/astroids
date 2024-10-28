@@ -40,6 +40,7 @@ handlePlayerCollision p gstate@GameState{..} |  checkCollision p comets || check
                         , bb = bb p1
                         , pSpeed = 0
                         , pMovedir = pMovedir p1
+                        , pFacing = pFacing p1
                         } 
                                              | otherwise = player
 
