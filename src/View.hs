@@ -36,7 +36,7 @@ viewPure gstate@GameState{state = Playing} = pictures [pictures (map render (com
                                             pictures (map drawBoundingBox ( map getBB (comets gstate))) ,pictures (map drawBoundingBox ( map getBB (bullets gstate))), render exitButton]
 viewPure gstate@GameState{state = Menu}   = pictures [ color red $ render playButton]
 viewPure gstate@GameState{state = Paused} = pictures [color white $ translate (-250) (100) $ text "PAUSED"]
-viewPure gstate@GameState{state = GameOver} = Blank
+viewPure gstate@GameState{state = GameOver} = pictures [color red $ render playButton]
 
 
 drawHighScores :: IO Picture
@@ -44,12 +44,12 @@ drawHighScores = do
     scoreString <- readFromFile scoreFilePath
     let scores = getScores scoreString
     let pic = pictures [
-            color white $ scale 0.1 0.1 $ translate (400) 680  (text $ "Highscores:"),
-            color white $ scale 0.1 0.1 $ translate (400) 480  (text $ "1: " ++ show (scores !! 0)),
-            color white $ scale 0.1 0.1 $ translate (400) 280  (text $ "2: " ++ show (scores !! 1)),
-            color white $ scale 0.1 0.1 $ translate (400) 80   (text $ "3: " ++ show (scores !! 2)),
-            color white $ scale 0.1 0.1 $ translate (400) (-120) (text $ "4: " ++ show (scores !! 3)),
-            color white $ scale 0.1 0.1 $ translate (400) (-320) (text $ "5: " ++ show (scores !! 4))]
+            color white $ scale 0.1 0.1 $ translate (2000) 680  (text $ "Highscores:"),
+            color white $ scale 0.1 0.1 $ translate (2000) 480  (text $ "1: " ++ show (scores !! 0)),
+            color white $ scale 0.1 0.1 $ translate (2000) 280  (text $ "2: " ++ show (scores !! 1)),
+            color white $ scale 0.1 0.1 $ translate (2000) 80   (text $ "3: " ++ show (scores !! 2)),
+            color white $ scale 0.1 0.1 $ translate (2000) (-120) (text $ "4: " ++ show (scores !! 3)),
+            color white $ scale 0.1 0.1 $ translate (2000) (-320) (text $ "5: " ++ show (scores !! 4))]
     return pic
 
 

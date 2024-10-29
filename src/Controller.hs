@@ -59,13 +59,18 @@ inputKey (EventKey (SpecialKey KeySpace)Up _ _)  gstate@GameState{..} = gstate {
 inputKey (EventKey (MouseButton LeftButton)Down _ (x,y))  gstate@GameState{state = Menu} = newState
     where 
 
-        newState | whithinButton (x,y) (bLocation playButton) playWidth playHeigth = gstate {state = Playing}
+        newState | whithinButton (x,y) (bLocation playButton) playWidth playHeigth = initialState{state = Playing}
                  | otherwise = gstate
 
 inputKey (EventKey (MouseButton LeftButton)Down _ (x,y))  gstate@GameState{state = Playing} = newState
     where 
 
         newState | whithinButton (x,y) (bLocation exitButton) exitWidth exitHeigth = gstate {state = GameOver}
+                 | otherwise = gstate
+inputKey (EventKey (MouseButton LeftButton)Down _ (x,y))  gstate@GameState{state = GameOver} = newState
+    where 
+
+        newState | whithinButton (x,y) (bLocation playButton) playWidth playHeigth = gstate {state = Menu}
                  | otherwise = gstate
 
 
