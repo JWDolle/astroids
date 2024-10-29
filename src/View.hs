@@ -17,7 +17,7 @@ import Entity
 import Score
 
 view :: GameState -> IO Picture
-view gstate@(GameState _ _ _ _ _ _ _ _ _ GameOver) = do 
+view gstate@(GameState _ _ _ _ _ _ _ _ _ _ GameOver) = do 
     scores <- drawHighScores
     return $ pictures [scores, viewPure gstate]
 view gstate = return $ viewPure gstate
@@ -35,7 +35,9 @@ viewPure gstate@GameState{state = Playing} = pictures [pictures (map render (com
                                             
                                             pictures (map drawBoundingBox ( map getBB (comets gstate))) ,pictures (map drawBoundingBox ( map getBB (bullets gstate))), render exitButton]
 viewPure gstate@GameState{state = Menu}   = pictures [ color red $ render playButton]
+viewPure gstate@GameState{state = Paused} = pictures [color white $ translate (-250) (100) $ text "PAUSED"]
 viewPure gstate@GameState{state = GameOver} = Blank
+
 
 drawHighScores :: IO Picture
 drawHighScores = do
