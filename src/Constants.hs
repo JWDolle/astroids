@@ -90,3 +90,15 @@ rotateVector (x, y) angleDeg =
 
 secToframes:: Int -> Int
 secToframes secs = secs * frameRate
+
+-- Score gained from killing a comet
+cometScore :: Int
+cometScore = 25
+
+-- Score gained from killing a comet
+scatterScore :: Int
+scatterScore = 100
+
+-- Score gained from killing a comet
+ufoScore :: Int
+ufoScore = 200

@@ -18,7 +18,7 @@ import Model
     
 
 handleCollision :: GameState -> GameState
-handleCollision gstate@(GameState i e p c u s l b r Playing ) =
+handleCollision gstate@(GameState i e p c u s l b r sc Playing ) =
     let playerCollision  = handlePlayerCollision p gstate
         newBullets       = map (\x -> handleBulletCollisions x gstate) b
         cometCollision   = map (\z -> handleCometCollision z gstate) c
@@ -35,7 +35,9 @@ handleCollision gstate@(GameState i e p c u s l b r Playing ) =
         filteredComets   = filter (\a ->  cLives a > 0 ) cometCollision ++ newComets
         filteredScatter  = filter (\t ->  sLives t > 0 ) scatterCollision
         filteredUfo      = filter (\k ->  uLives k > 0 ) ufoCollision
-    in gstate { player = playerCollision, comets = filteredComets, ufos = filteredUfo, scatters = filteredScatter, bullets = filteredBullets, random = r, state = newState} 
+
+        newScore = sum ((cometScore * length (filter (\c -> cLives c <= 0) cometCollision)):(scatterScore * length (filter (\s -> sLives s <= 0) scatterCollision)):(ufoScore * length (filter (\u -> uLives u <= 0) ufoCollision)):[sc])
+    in gstate { player = playerCollision, comets = filteredComets, ufos = filteredUfo, scatters = filteredScatter, bullets = filteredBullets, random = r, score = newScore, state = newState} 
 
 
 

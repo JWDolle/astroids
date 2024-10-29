@@ -17,14 +17,14 @@ import Entity
 import Score
 
 view :: GameState -> IO Picture
-view gstate@(GameState _ _ _ _ _ _ _ _ _ GameOver) = do 
+view gstate@(GameState _ _ _ _ _ _ _ _ _ _ GameOver) = do 
     scores <- drawHighScores
     return $ pictures [scores, viewPure gstate]
 view gstate = return $ viewPure gstate
 
 viewPure :: GameState -> Picture
 viewPure gstate@GameState{state = Playing} = pictures [pictures (map render (comets gstate)), 
-                            
+                                            
                                             color red $ debugDirection (player gstate), 
                                             
                                             color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate,
@@ -35,19 +35,21 @@ viewPure gstate@GameState{state = Playing} = pictures [pictures (map render (com
                                             
                                             pictures (map drawBoundingBox ( map getBB (comets gstate))) ,pictures (map drawBoundingBox ( map getBB (bullets gstate))), render exitButton]
 viewPure gstate@GameState{state = Menu}   = pictures [ color red $ render playButton]
-viewPure gstate@GameState{state = GameOver} = Blank
+viewPure gstate@GameState{state = Paused} = pictures [color white $ translate (-250) (100) $ text "PAUSED"]
+viewPure gstate@GameState{state = GameOver} = pictures [color red $ render playButton]
+
 
 drawHighScores :: IO Picture
 drawHighScores = do
     scoreString <- readFromFile scoreFilePath
     let scores = getScores scoreString
     let pic = pictures [
-            color white $ scale 0.1 0.1 $ translate (400) 680  (text $ "Highscores:"),
-            color white $ scale 0.1 0.1 $ translate (400) 480  (text $ "1: " ++ show (scores !! 0)),
-            color white $ scale 0.1 0.1 $ translate (400) 280  (text $ "2: " ++ show (scores !! 1)),
-            color white $ scale 0.1 0.1 $ translate (400) 80   (text $ "3: " ++ show (scores !! 2)),
-            color white $ scale 0.1 0.1 $ translate (400) (-120) (text $ "4: " ++ show (scores !! 3)),
-            color white $ scale 0.1 0.1 $ translate (400) (-320) (text $ "5: " ++ show (scores !! 4))]
+            color white $ scale 0.1 0.1 $ translate (2000) 680  (text $ "Highscores:"),
+            color white $ scale 0.1 0.1 $ translate (2000) 480  (text $ "1: " ++ show (scores !! 0)),
+            color white $ scale 0.1 0.1 $ translate (2000) 280  (text $ "2: " ++ show (scores !! 1)),
+            color white $ scale 0.1 0.1 $ translate (2000) 80   (text $ "3: " ++ show (scores !! 2)),
+            color white $ scale 0.1 0.1 $ translate (2000) (-120) (text $ "4: " ++ show (scores !! 3)),
+            color white $ scale 0.1 0.1 $ translate (2000) (-320) (text $ "5: " ++ show (scores !! 4))]
     return pic
 
 
@@ -93,7 +95,8 @@ debugPlayer gstate = pictures [
     translate (-180) (-1320) textLine11,  -- Second corner
     translate (-180) (-1520) textLine12,  -- Third corner
     translate (-180) (-1720) textLine14,   -- Fourth corner
-    translate (-180) (-1920) textLine15
+    translate (-180) (-1920) textLine15,
+    translate (-180) (-2120) textLine16
     ]
   where
     cplayer = player gstate  -- Extract the player from the game state
@@ -123,6 +126,7 @@ debugPlayer gstate = pictures [
                  else text $ "prAlive 1: "++ show (length (bullets gstate))
     
     textLine15 = text $ "Number of Enemies: " ++ show (length (comets gstate))
+    textLine16 = text $ "Score: " ++ show (score gstate)
 
 
 drawBoundingBox :: BoundingBox -> Picture

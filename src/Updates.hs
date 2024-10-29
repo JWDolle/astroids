@@ -31,22 +31,22 @@ updateRotationPlayer p gstate =
     in gstate { player = rotatedPlayer }
 
 updateEnemies ::  GameState -> GameState
-updateEnemies gstate@GameState{..} = if length comets > 2 then gstate{comets = map (\x -> rotate_ (move x)) comets,
+updateEnemies gstate@GameState{..} = if length scatters > 2 then gstate{comets = map (\x -> rotate_ (move x)) comets,
                                                   scatters = map (\x -> rotate_ (move x))scatters,
-                                                  ufos = map updateUfo ufos} else spawnEnemy c1 gstate
+                                                  ufos = map updateUfo ufos} else spawnScatter scat gstate
                         where 
                             updateUfo:: UFO -> UFO
                             updateUfo u | (invicible u) = u
                                         | otherwise = move u
 
-spawnEnemy :: Comet -> GameState -> GameState
-spawnEnemy (Comet  liv loc dir f sh sp  bb) gState@(GameState i e p c u s l b r Playing) = (GameState i e p (newCom:c) u s l b (snd y) Playing)
+spawnComet :: Comet -> GameState -> GameState
+spawnComet (Comet  liv loc dir f sh sp  bb) gState@(GameState i e p c u s l b r sc Playing) = (GameState i e p (newCom:c) u s l b (snd y) sc Playing)
     where
 
         randomLocationX = randomRange (0,screenSize) r
         x = validSpawn ((fromIntegral (fst randomLocationX)) - ((fromIntegral screenSize) / 2)) (fst (pLocation p)) (snd randomLocationX)
         randomLocationY = randomRange (0,screenSize) (snd x)
-        y = validSpawn ((fromIntegral (fst randomLocationY)) - ((fromIntegral screenSize) / 2)) (fst (pLocation p)) (snd randomLocationY)
+        y = validSpawn ((fromIntegral (fst randomLocationY)) - ((fromIntegral screenSize) / 2)) (snd (pLocation p)) (snd randomLocationY)
 
         randomDirectionX = randomRange (0,2) (snd randomLocationY)
         randomDirectionY = randomRange (0,2) (snd randomDirectionX)
@@ -58,6 +58,53 @@ spawnEnemy (Comet  liv loc dir f sh sp  bb) gState@(GameState i e p c u s l b r 
 
         newCom = (Comet  liv (fst x, fst y) ((fst randomDirectionX) - 1, (fst randomDirectionY) - 1) f sh sp newbb)
 
+spawnScatter :: Scatter -> GameState -> GameState
+spawnScatter (Scatter nam liv loc dir f sh sp  bb) gState@(GameState i e p c u s l b r sc Playing) = (GameState i e p c u (newscat:s) l b (snd y) sc Playing)
+    where
+
+        randomLocationX = randomRange (0,screenSize) r
+        x = validSpawn ((fromIntegral (fst randomLocationX)) - ((fromIntegral screenSize) / 2)) (fst (pLocation p)) (snd randomLocationX)
+        randomLocationY = randomRange (0,screenSize) (snd x)
+        y = validSpawn ((fromIntegral (fst randomLocationY)) - ((fromIntegral screenSize) / 2)) (snd (pLocation p)) (snd randomLocationY)
+
+        randomDirectionX = randomRange (0,2) (snd randomLocationY)
+        randomDirectionY = randomRange (0,2) (snd randomDirectionX)
+
+        newbb = bb{
+            centerX = fst x,
+            centerY = fst y
+        }
+
+        newscat = (Scatter nam liv (fst x, fst y) ((fst randomDirectionX) - 1, (fst randomDirectionY) - 1) f sh sp newbb)
+
+spawnUFO :: UFO -> GameState -> GameState
+spawnUFO (UFO nam liv loc dir sh bb) gState@(GameState i e p c u s l b r sc Playing) = (GameState i e p c (newUFO:u) s l b (snd loc) sc Playing)
+    where
+        
+        wall :: (Int, StdGen)
+        wall = randomRange (1,4) r
+        randomLocation = randomRange (0,screenSize) (snd wall)
+        loc = validSpawn ((fromIntegral (fst randomLocation)) - ((fromIntegral screenSize) / 2)) (fst (pLocation p)) (snd randomLocation)
+
+        x = case fst wall of
+            1 -> 0
+            2 -> 0
+            3 -> fst loc
+            4 -> -(fst loc)
+
+        y = case fst wall of            
+            1 -> fst loc
+            2 -> -(fst loc)
+            3 -> 0
+            4 -> 0
+
+        newbb = bb{
+            centerX = x,
+            centerY = y
+            }
+
+        newUFO = (UFO nam liv ( x,  y) (pLocation p) sh newbb)
+
 validSpawn :: Float -> Float -> StdGen -> (Float, StdGen)
 validSpawn e p rand | withinWrap e p = validSpawn (fromIntegral (fst newRand)) p (snd newRand)
                     | otherwise = (e,rand)
@@ -68,7 +115,7 @@ validSpawn e p rand | withinWrap e p = validSpawn (fromIntegral (fst newRand)) p
 
 
 updatePlayer:: GameState -> GameState
-updatePlayer gstate@(GameState _ _ p _ _ _ _ _ _ _)= 
+updatePlayer gstate@(GameState _ _ p _ _ _ _ _ _ _ _)= 
     let
         movedPlayer = updateMovementPlayer p gstate
         rotatedPlayer = updateRotationPlayer (player movedPlayer) movedPlayer
@@ -76,7 +123,7 @@ updatePlayer gstate@(GameState _ _ p _ _ _ _ _ _ _)=
     in  updatedPlayer
 
 updateBullets:: Float -> GameState -> GameState
-updateBullets secs gstate@(GameState _ _ _ _ _ _ _ b _ _) =
+updateBullets secs gstate@(GameState _ _ _ _ _ _ _ b _ _ _) =
     let 
         timedOut = filterProjectiles (map (\x -> outOfTime x secs ) b)
         movedBullets = map move timedOut

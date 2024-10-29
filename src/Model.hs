@@ -27,9 +27,10 @@ data GameState = GameState {
                  , lasers :: Lasers
                  , bullets :: Bullets
                  , random :: StdGen
+                 , score :: Int
                  , state :: State
                  --, sprites :: Sprites
                  }
 
 initialState ::  GameState
-initialState  = GameState playButton 0 p1 [] [] [scat] [] [] seed Menu 
+initialState  = GameState playButton 0 p1 [] [] [scat] [] [] seed 0 Menu 
