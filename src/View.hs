@@ -95,7 +95,8 @@ debugPlayer gstate = pictures [
     translate (-180) (-1320) textLine11,  -- Second corner
     translate (-180) (-1520) textLine12,  -- Third corner
     translate (-180) (-1720) textLine14,   -- Fourth corner
-    translate (-180) (-1920) textLine15
+    translate (-180) (-1920) textLine15,
+    translate (-180) (-2120) textLine16
     ]
   where
     cplayer = player gstate  -- Extract the player from the game state
@@ -125,6 +126,7 @@ debugPlayer gstate = pictures [
                  else text $ "prAlive 1: "++ show (length (bullets gstate))
     
     textLine15 = text $ "Number of Enemies: " ++ show (length (comets gstate))
+    textLine16 = text $ "Score: " ++ show (score gstate)
 
 
 drawBoundingBox :: BoundingBox -> Picture

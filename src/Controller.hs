@@ -11,6 +11,7 @@ import Projectile
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
+import Score
 import Graphics.Gloss.Interface.IO.Game (Key(MouseButton))
 
 
@@ -18,6 +19,10 @@ import Graphics.Gloss.Interface.IO.Game (Key(MouseButton))
 
 -- GameState 
 step :: Float -> GameState -> IO GameState
+step secs gstate@GameState{state = GameOver} = do
+    addHighScore (score gstate)
+    
+    return $ stepPure secs gstate{score = 0}
 step secs gstate@GameState{..} = return $ stepPure secs gstate
   
 stepPure :: Float -> GameState -> GameState
