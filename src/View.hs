@@ -24,7 +24,7 @@ view gstate = return $ viewPure gstate
 
 viewPure :: GameState -> Picture
 viewPure gstate@GameState{state = Playing} = pictures [pictures (map render (comets gstate)), 
-                            
+                                            
                                             color red $ debugDirection (player gstate), 
                                             
                                             color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate,
