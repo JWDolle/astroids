@@ -33,7 +33,11 @@ updateRotationPlayer p gstate =
 updateEnemies ::  GameState -> GameState
 updateEnemies gstate@GameState{..} = if length comets > 2 then gstate{comets = map (\x -> rotate_ (move x)) comets,
                                                   scatters = map (\x -> rotate_ (move x))scatters,
-                                                  ufos = map (\x -> move x) ufos} else spawnEnemy c1 gstate
+                                                  ufos = map updateUfo ufos} else spawnEnemy c1 gstate
+                        where 
+                            updateUfo:: UFO -> UFO
+                            updateUfo u | (invicible u) = u
+                                        | otherwise = move u
 
 spawnEnemy :: Comet -> GameState -> GameState
 spawnEnemy (Comet  liv loc dir f sh sp  bb) gState@(GameState i e p c u s l b r Playing) = (GameState i e p (newCom:c) u s l b (snd y) Playing)

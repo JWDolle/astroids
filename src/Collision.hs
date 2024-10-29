@@ -29,6 +29,8 @@ handleCollision gstate@(GameState i e p c u s l b r Playing ) =
         newComets          = concatMap (`deadScatter` c) deadScatters
         newState | pLives playerCollision == 0 = GameOver
                  | otherwise = Playing
+
+        
         filteredBullets  = filterProjectiles newBullets
         filteredComets   = filter (\a ->  cLives a > 0 ) cometCollision ++ newComets
         filteredScatter  = filter (\t ->  sLives t > 0 ) scatterCollision
@@ -61,16 +63,16 @@ handleBulletCollisions bullet gstate@GameState{..}  | checkCollision bullet come
                                                     | otherwise = bullet
 
 handleCometCollision :: Comet -> GameState -> Comet
-handleCometCollision c gstate@GameState{..}     | checkCollision c bullets = c {cLives = cLives c - 1}
+handleCometCollision c gstate@GameState{..}     | checkCollision c bullets || collide c player = c {cLives = cLives c - 1}
                                                 | otherwise = c
 
 handleScatterCollision :: Scatter -> GameState -> Scatter
-handleScatterCollision s gstate@GameState{..}  | checkCollision s bullets = s {sLives = sLives s - 1}
+handleScatterCollision s gstate@GameState{..}  | checkCollision s bullets  || collide s player= s {sLives = sLives s - 1}
                                                | otherwise = s
 
 
 handleUfoCollision :: UFO -> GameState -> UFO
-handleUfoCollision u gstate@GameState{..}    | checkCollision u bullets = u {uLives = uLives u - 1}
+handleUfoCollision u gstate@GameState{..}    | invicibel == False || checkCollision u bullets  || collide u player = u {uLives = uLives u - 1}
                                              | otherwise = u
 
 
@@ -91,3 +93,5 @@ deadScatter s@Scatter{..} c = c ++ [b1, b2, b3, b4]
         b2 = Comet 1 sLocation b2Dir sFacing ( color yellow $ polygon [(0,0), (0,30), (30,30),(30,0)]) 2  BB{ centerX = fst (sLoc) + 15, centerY = snd (sLoc) + 15, halfWidth = 15, halfHeigth = 15, rotation = 90}
         b3 = Comet 1 sLocation b3Dir sFacing ( color yellow $ polygon [(0,0), (0,30), (30,30),(30,0)]) 2  BB{ centerX = fst (sLoc) + 15, centerY = snd (sLoc) + 15, halfWidth = 15, halfHeigth = 15, rotation = 90}
         b4 = Comet 1 sLocation b4Dir sFacing ( color yellow $ polygon [(0,0), (0,30), (30,30),(30,0)]) 2  BB{ centerX = fst (sLoc) + 15, centerY = snd (sLoc) + 15, halfWidth = 15, halfHeigth = 15, rotation = 90}
+   
+

@@ -59,7 +59,7 @@ accel:: Float
 accel = 0.1
 
 decel :: Float
-decel = 0.01
+decel = 0.1
 
 
 
