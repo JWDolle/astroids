@@ -15,6 +15,7 @@ import Projectile
 import Button
 import Entity
 import Score
+import Graphics.Gloss (orange)
 
 view :: GameState -> IO Picture
 view gstate@(GameState _ _ _ _ _ _ _ _ _ _ GameOver) = do 
@@ -28,15 +29,22 @@ viewPure gstate@GameState{state = Playing} = pictures [pictures (map render (com
                                             color red $ debugDirection (player gstate), 
                                             
                                             color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate,
+                                            color white $ scale 0.1 0.1 $ translate 3450 3700 $ text "Exit:",
                                             
                                             render (player gstate), 
                                             renderBullets (bullets gstate),
                                             drawBoundingBox (bb (player gstate)), pictures (map render(scatters gstate)), 
                                             
-                                            pictures (map drawBoundingBox ( map getBB (comets gstate))) ,pictures (map drawBoundingBox ( map getBB (bullets gstate))), render exitButton]
-viewPure gstate@GameState{state = Menu}   = pictures [ color red $ render playButton]
-viewPure gstate@GameState{state = Paused} = pictures [color white $ translate (-250) (100) $ text "PAUSED"]
-viewPure gstate@GameState{state = GameOver} = pictures [color red $ render playButton]
+                                            pictures (map drawBoundingBox ( map getBB (comets gstate))) ,pictures (map drawBoundingBox ( map getBB (bullets gstate))), 
+                                            color orange $ render exitButton]
+viewPure gstate@GameState{state = Menu}   = pictures [color blue $ render playButton, 
+                                                      color white $ translate (-335) (200) $ text "ASTEROIDS", 
+                                                      color white $ scale 0.25 0.25 $ translate (-450) (-175)  $ text "Press to play:"]
+viewPure gstate@GameState{state = Paused} = pictures [color white $ translate (-250) (100) $ text "PAUSED",
+                                                      color white $ scale 0.25 0.25 $ translate (-850) (-175)  $ text "Press 'P' to resume game"]
+viewPure gstate@GameState{state = GameOver} = pictures [color blue $ render playButton,
+                                                        color white $ scale 0.25 0.25 $ translate (-550) (-175)  $ text "Return to menu:",
+                                                        color white $ translate (-335) (200) $ text "GAMEOVER"]
 
 
 drawHighScores :: IO Picture
@@ -44,12 +52,12 @@ drawHighScores = do
     scoreString <- readFromFile scoreFilePath
     let scores = getScores scoreString
     let pic = pictures [
-            color white $ scale 0.1 0.1 $ translate (2000) 680  (text $ "Highscores:"),
-            color white $ scale 0.1 0.1 $ translate (2000) 480  (text $ "1: " ++ show (scores !! 0)),
-            color white $ scale 0.1 0.1 $ translate (2000) 280  (text $ "2: " ++ show (scores !! 1)),
-            color white $ scale 0.1 0.1 $ translate (2000) 80   (text $ "3: " ++ show (scores !! 2)),
-            color white $ scale 0.1 0.1 $ translate (2000) (-120) (text $ "4: " ++ show (scores !! 3)),
-            color white $ scale 0.1 0.1 $ translate (2000) (-320) (text $ "5: " ++ show (scores !! 4))]
+            color white $ scale 0.2 0.2 $ translate (1000) 340  (text $ "Highscores:"),
+            color white $ scale 0.2 0.2 $ translate (1000) 190  (text $ "1: " ++ show (scores !! 0)),
+            color white $ scale 0.2 0.2 $ translate (1000) 40  (text $ "2: " ++ show (scores !! 1)),
+            color white $ scale 0.2 0.2 $ translate (1000) (-110)   (text $ "3: " ++ show (scores !! 2)),
+            color white $ scale 0.2 0.2 $ translate (1000) (-260) (text $ "4: " ++ show (scores !! 3)),
+            color white $ scale 0.2 0.2 $ translate (1000) (-410) (text $ "5: " ++ show (scores !! 4))]
     return pic
 
 

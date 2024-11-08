@@ -36,7 +36,7 @@ updateEnemies gstate@GameState{..} = if length scatters > 2 then gstate{comets =
                                                   ufos = map updateUfo ufos} else spawnScatter scat gstate
                         where 
                             updateUfo:: UFO -> UFO
-                            updateUfo u | (invicible u) = u
+                            updateUfo u | (invincible u) = u
                                         | otherwise = move u
 
 spawnComet :: Comet -> GameState -> GameState
@@ -78,7 +78,7 @@ spawnScatter (Scatter nam liv loc dir f sh sp  bb) gState@(GameState i e p c u s
         newscat = (Scatter nam liv (fst x, fst y) ((fst randomDirectionX) - 1, (fst randomDirectionY) - 1) f sh sp newbb)
 
 spawnUFO :: UFO -> GameState -> GameState
-spawnUFO (UFO nam liv loc dir sh bb) gState@(GameState i e p c u s l b r sc Playing) = (GameState i e p c (newUFO:u) s l b (snd loc) sc Playing)
+spawnUFO (UFO nam liv loc dir sh bb inv) gState@(GameState i e p c u s l b r sc Playing) = (GameState i e p c (newUFO:u) s l b (snd loc) sc Playing)
     where
         
         wall :: (Int, StdGen)
@@ -103,7 +103,7 @@ spawnUFO (UFO nam liv loc dir sh bb) gState@(GameState i e p c u s l b r sc Play
             centerY = y
             }
 
-        newUFO = (UFO nam liv ( x,  y) (pLocation p) sh newbb)
+        newUFO = (UFO nam liv ( x,  y) (pLocation p) sh newbb inv)
 
 validSpawn :: Float -> Float -> StdGen -> (Float, StdGen)
 validSpawn e p rand | withinWrap e p = validSpawn (fromIntegral (fst newRand)) p (snd newRand)

@@ -40,7 +40,7 @@ data UFO = UFO { --shoots the player
     ,uDirection :: Vector
     ,uShape :: Picture
     ,uBB :: BoundingBox
-    ,invicible :: Bool
+    ,invincible :: Bool
 
 }
 data Comet = Comet { -- no intelligence
@@ -181,12 +181,13 @@ scat = Scatter {
 
 uf:: UFO
 uf = UFO{
-    uName = "Test comet"
-    ,uLives = 1
+    spawnTime = 20,
+    uLives = 1
     ,uLocation = (-100, 100) -- center of the thing 
     ,uDirection = (1,0)
     ,uShape = color blue $ polygon [(0,0), (0,60), (60,60),(60,0)]
-    ,uBB = BB{ centerX = -70, centerY = 130, halfWidth = 30, halfHeigth = 30, rotation = 90}
+    ,uBB = BB{ centerX = -70, centerY = 130, halfWidth = 30, halfHeigth = 30, rotation = 90},
+    invincible = True
 }
 
 
