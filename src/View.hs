@@ -33,7 +33,7 @@ viewPure gstate@GameState{state = Playing} = pictures [pictures (map render (com
                                             renderBullets (bullets gstate),
                                             drawBoundingBox (bb (player gstate)), pictures (map render(scatters gstate)), 
                                             
-                                            pictures (map drawBoundingBox ( map getBB (comets gstate))) ,pictures (map drawBoundingBox ( map getBB (bullets gstate))), render exitButton]
+                                            pictures (map drawBoundingBox ( map getBB (comets gstate))) ,pictures (map drawBoundingBox ( map getBB (ufos gstate))),pictures (map drawBoundingBox ( map getBB (bullets gstate))), pictures(map render (ufos gstate)), pictures(map render(lasers gstate)), render exitButton]
 viewPure gstate@GameState{state = Menu}   = pictures [ color red $ render playButton]
 viewPure gstate@GameState{state = Paused} = pictures [color white $ translate (-250) (100) $ text "PAUSED"]
 viewPure gstate@GameState{state = GameOver} = pictures [color red $ render playButton]
@@ -76,8 +76,7 @@ drawHighScores = do
 debugDirection :: Player -> Picture
 debugDirection Player{..} =
     let (x, y) = pLocation         -- Get player location
-        (dx, dy) | isDecelling = pFacing
-                 | otherwise = pMovedir-- Get direction vector
+        (dx, dy) = pFacing-- Get direction vector
         directionEnd = (x + dx * 50, y + dy * 50)  -- Calculate end point
     in translate (playerWidth/2) (playerWidth/2) $ line [ (x, y), directionEnd ]  -- Draw a line from the location to the end point
 debugPlayer :: GameState -> Picture
@@ -96,8 +95,10 @@ debugPlayer gstate = pictures [
     translate (-180) (-1520) textLine12,  -- Third corner
     translate (-180) (-1720) textLine14,   -- Fourth corner
     translate (-180) (-1920) textLine15,
-    translate (-180) (-2120) textLine16
-    ]
+    translate (-180) (-2120) textLine16,
+    translate (-180) (-2320) textLine17,
+    translate (-180) (-2520) textLine18
+  ]
   where
     cplayer = player gstate  -- Extract the player from the game state
     bounding = bb (player gstate)  -- Extract bounding box from the player
@@ -127,6 +128,12 @@ debugPlayer gstate = pictures [
     
     textLine15 = text $ "Number of Enemies: " ++ show (length (comets gstate))
     textLine16 = text $ "Score: " ++ show (score gstate)
+    textLine17 = text $ "Lasers: " ++ show (length (lasers gstate))
+    textLine18 = text $ "UFO dir: " ++ 
+     if not (null (ufos gstate)) 
+        then show (aimDir (head (ufos gstate))) 
+        else "No UFOs"
+   
 
 
 drawBoundingBox :: BoundingBox -> Picture

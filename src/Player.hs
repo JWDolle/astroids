@@ -33,6 +33,7 @@ data Player = Player {
                 , isDecelling:: Bool
                 --, animation:: Animation
                 , bb :: BoundingBox
+                , invincible :: Bool
                 }
 
 
@@ -49,7 +50,7 @@ player1Local = (0,0)
 p1 :: Player
 p1 = Player {
                 pName = "player 1"
-                , pLives = 3
+                , pLives = 10
                 , pLocation = player1Local -- center of the player
                 , pMovedir = (0,1)
                 , pFacing = (0,1)

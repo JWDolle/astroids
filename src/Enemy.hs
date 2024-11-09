@@ -33,14 +33,16 @@ data Scatter = Scatter { --become small comets
     ,sBB :: BoundingBox
 }
 
-data UFO = UFO { --shoots the player
-    spawnTime :: Float
-    ,uLives :: Int
+data UFO = UFO { --shoots the playerld
+    uLives :: Int
+    ,uFacing :: Vector
     ,uLocation :: Point
     ,uDirection :: Vector
     ,uShape :: Picture
     ,uBB :: BoundingBox
     ,invicible :: Bool
+    ,aimDir :: Vector
+    ,laserCld :: Int
 
 }
 data Comet = Comet { -- no intelligence
@@ -87,7 +89,8 @@ instance Moveable Comet where
 instance Moveable  UFO where
     move  u@UFO {..} = u {
         uLocation = (centerX updatedBB - scatterWidth/2 , centerY updatedBB - scatterHeigth/2),
-        uBB = updatedBB
+        uBB = updatedBB,
+        laserCld = updatedCld
     }
         where
             adjusted = (fst uLocation + fst uDirection * 2,
@@ -97,9 +100,13 @@ instance Moveable  UFO where
 
             -- Update the bounding box based on movement
             updatedBB = updateBoundingBox (dx, dy) (rotation uBB)  uBB
+            updatedCld = laserCld + 1
+             
+
     rotate_ u@UFO {..} = u {
         uDirection = normalized,
         uBB = updatedBB
+        
     }
         where
             angleRadians = radians 10
@@ -109,6 +116,7 @@ instance Moveable  UFO where
          -- Update the bounding box with new rotation
             normalized = normalize adjusted
             updatedBB = updateBoundingBox (0, 0) (degrees nAngle)  uBB
+            
 
 instance Moveable Scatter where
     move s@Scatter {..} =  s {
@@ -181,13 +189,29 @@ scat = Scatter {
 
 uf:: UFO
 uf = UFO{
-    uName = "Test comet"
-    ,uLives = 1
+    uLives = 1
+    ,uFacing = (0,1)
     ,uLocation = (-100, 100) -- center of the thing 
     ,uDirection = (1,0)
-    ,uShape = color blue $ polygon [(0,0), (0,60), (60,60),(60,0)]
+    ,uShape = color green $ polygon [(0,0), (0,60), (60,60),(60,0)]
     ,uBB = BB{ centerX = -70, centerY = 130, halfWidth = 30, halfHeigth = 30, rotation = 90}
+    ,invicible  = False
+    ,aimDir = (-1,0)
+    ,laserCld = 0
+    
 }
 
+
+aimDirection :: Point -> Point -> Vector
+aimDirection u p = normalize(fst aim, snd aim)
+    where 
+        aim = ((fst p )- (fst u), (snd p) - (snd u))
+
+ufoCanshoot :: UFO  -> Bool
+ufoCanshoot u | laserCld  u < laserCooldown = False
+              | otherwise = True
+
+filterUfo :: UFO -> UFO
+filterUfo u = if ufoCanshoot u then u{laserCld = 0} else u
 
 

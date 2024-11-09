@@ -21,6 +21,7 @@ handleCollision :: GameState -> GameState
 handleCollision gstate@(GameState i e p c u s l b r sc Playing ) =
     let playerCollision  = handlePlayerCollision p gstate
         newBullets       = map (\x -> handleBulletCollisions x gstate) b
+        newLasers        = map (\t -> handleLaserCollisions t gstate) l
         cometCollision   = map (\z -> handleCometCollision z gstate) c
         scatterCollision = map (\y -> handleScatterCollision y gstate) s       
         ufoCollision     = map (\w -> handleUfoCollision w gstate) u
@@ -32,17 +33,18 @@ handleCollision gstate@(GameState i e p c u s l b r sc Playing ) =
 
         
         filteredBullets  = filterProjectiles newBullets
+        filteredLasers   = filterProjectiles newLasers
         filteredComets   = filter (\a ->  cLives a > 0 ) cometCollision ++ newComets
         filteredScatter  = filter (\t ->  sLives t > 0 ) scatterCollision
         filteredUfo      = filter (\k ->  uLives k > 0 ) ufoCollision
 
         newScore = sum ((cometScore * length (filter (\c -> cLives c <= 0) cometCollision)):(scatterScore * length (filter (\s -> sLives s <= 0) scatterCollision)):(ufoScore * length (filter (\u -> uLives u <= 0) ufoCollision)):[sc])
-    in gstate { player = playerCollision, comets = filteredComets, ufos = filteredUfo, scatters = filteredScatter, bullets = filteredBullets, random = r, score = newScore, state = newState} 
+    in gstate { player = playerCollision, comets = filteredComets, ufos = filteredUfo, scatters = filteredScatter, lasers = filteredLasers, bullets = filteredBullets, random = r, score = newScore, state = newState} 
 
 
 
 handlePlayerCollision :: Player -> GameState -> Player
-handlePlayerCollision p gstate@GameState{..} |  checkCollision p comets || checkCollision p scatters || checkCollision p ufos =  p 
+handlePlayerCollision p gstate@GameState{..} |  checkCollision p comets || checkCollision p scatters || checkCollision p filteredUfos || checkCollision p lasers =  p 
                         { pLives = pLives p - 1
                         , pLocation = pLocation p1  -- Replace this with actual logic for new location
                         , bb = bb p1
@@ -51,6 +53,8 @@ handlePlayerCollision p gstate@GameState{..} |  checkCollision p comets || check
                         , pFacing = pFacing p1
                         } 
                                              | otherwise = player
+                        where
+                            filteredUfos = filter (not.invicible) ufos
 
 
 
@@ -64,6 +68,9 @@ handleBulletCollisions :: Projectile -> GameState -> Projectile
 handleBulletCollisions bullet gstate@GameState{..}  | checkCollision bullet comets || checkCollision bullet scatters || checkCollision bullet ufos = bullet{prAlive = False}
                                                     | otherwise = bullet
 
+handleLaserCollisions :: Projectile -> GameState -> Projectile                                           
+handleLaserCollisions laser gstate@GameState{..}    | collide laser player = laser{prAlive = False}
+                                                    | otherwise = laser
 handleCometCollision :: Comet -> GameState -> Comet
 handleCometCollision c gstate@GameState{..}     | checkCollision c bullets || collide c player = c {cLives = cLives c - 1}
                                                 | otherwise = c
@@ -74,7 +81,7 @@ handleScatterCollision s gstate@GameState{..}  | checkCollision s bullets  || co
 
 
 handleUfoCollision :: UFO -> GameState -> UFO
-handleUfoCollision u gstate@GameState{..}    | invicibel == False || checkCollision u bullets  || collide u player = u {uLives = uLives u - 1}
+handleUfoCollision u gstate@GameState{..}    | ((invicible u) == False ) &&  (checkCollision u bullets  || collide u player) = u {uLives = uLives u - 1}
                                              | otherwise = u
 
 

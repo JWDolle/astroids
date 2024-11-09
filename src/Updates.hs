@@ -31,13 +31,15 @@ updateRotationPlayer p gstate =
     in gstate { player = rotatedPlayer }
 
 updateEnemies ::  GameState -> GameState
-updateEnemies gstate@GameState{..} = if length scatters > 2 then gstate{comets = map (\x -> rotate_ (move x)) comets,
-                                                  scatters = map (\x -> rotate_ (move x))scatters,
-                                                  ufos = map updateUfo ufos} else spawnScatter scat gstate
+updateEnemies gState@(GameState i e p c u s l b r sc Playing) = if length u > 0 then gState{comets = map (\x -> rotate_ (move x)) c,
+                                                  scatters = map (\x -> rotate_ (move x))s,
+                                                  ufos = map updateUfo u} else spawnUFO uf gState
                         where 
                             updateUfo:: UFO -> UFO
-                            updateUfo u | (invicible u) = u
-                                        | otherwise = move u
+                            updateUfo ufo | (invicible ufo) = ufo
+                                          | otherwise = let moved = move ufo
+                                                            newAim =  moved{aimDir = aimDirection (fst (uLocation ufo) + ufoWidth/2, snd (uLocation ufo) + ufoHeigth/2) (pLocation p)} 
+                                                         in newAim
 
 spawnComet :: Comet -> GameState -> GameState
 spawnComet (Comet  liv loc dir f sh sp  bb) gState@(GameState i e p c u s l b r sc Playing) = (GameState i e p (newCom:c) u s l b (snd y) sc Playing)
@@ -52,8 +54,8 @@ spawnComet (Comet  liv loc dir f sh sp  bb) gState@(GameState i e p c u s l b r 
         randomDirectionY = randomRange (0,2) (snd randomDirectionX)
 
         newbb = bb{
-            centerX = fst x,
-            centerY = fst y
+            centerX = fst x + cometWidth/2,
+            centerY = fst y + cometHeigth/2
         }
 
         newCom = (Comet  liv (fst x, fst y) ((fst randomDirectionX) - 1, (fst randomDirectionY) - 1) f sh sp newbb)
@@ -78,7 +80,7 @@ spawnScatter (Scatter nam liv loc dir f sh sp  bb) gState@(GameState i e p c u s
         newscat = (Scatter nam liv (fst x, fst y) ((fst randomDirectionX) - 1, (fst randomDirectionY) - 1) f sh sp newbb)
 
 spawnUFO :: UFO -> GameState -> GameState
-spawnUFO (UFO nam liv loc dir sh bb) gState@(GameState i e p c u s l b r sc Playing) = (GameState i e p c (newUFO:u) s l b (snd loc) sc Playing)
+spawnUFO (UFO liv fac loc dir sh bb inv aim shtcld) gState@(GameState i e p c u s l b r sc Playing) = (GameState i e p c (newUFO:u) s l b (snd loc) sc Playing)
     where
         
         wall :: (Int, StdGen)
@@ -87,23 +89,30 @@ spawnUFO (UFO nam liv loc dir sh bb) gState@(GameState i e p c u s l b r sc Play
         loc = validSpawn ((fromIntegral (fst randomLocation)) - ((fromIntegral screenSize) / 2)) (fst (pLocation p)) (snd randomLocation)
 
         x = case fst wall of
-            1 -> 0
-            2 -> 0
+            1 -> (fromIntegral screenSize) / 2
+            2 -> -(fromIntegral screenSize) / 2
             3 -> fst loc
             4 -> -(fst loc)
 
         y = case fst wall of            
             1 -> fst loc
             2 -> -(fst loc)
-            3 -> 0
-            4 -> 0
+            3 -> (fromIntegral screenSize) / 2
+            4 -> -(fromIntegral screenSize) / 2
+
+        newDir  =  case fst randomDir of
+            1 -> (-1,0)
+            2 -> (1, 0)
+
 
         newbb = bb{
             centerX = x,
             centerY = y
             }
 
-        newUFO = (UFO nam liv ( x,  y) (pLocation p) sh newbb)
+        newUFO = (UFO  liv fac ( x,  y) newDir  sh newbb inv aim shtcld)
+        randomDir:: (Int, StdGen)
+        randomDir = randomRange (1,2) (snd wall)
 
 validSpawn :: Float -> Float -> StdGen -> (Float, StdGen)
 validSpawn e p rand | withinWrap e p = validSpawn (fromIntegral (fst newRand)) p (snd newRand)
@@ -130,7 +139,21 @@ updateBullets secs gstate@(GameState _ _ _ _ _ _ _ b _ _ _) =
         updatedBullets = gstate{ bullets = filterProjectiles movedBullets }
     in  updatedBullets
 
+spawnLasers :: GameState -> GameState
+spawnLasers gstate@GameState{..} = 
+    let
+        ufosThatShoot = filter (\x -> ufoCanshoot x) ufos
+        newLasers = map createLaser ufosThatShoot
+        spawned = lasers ++ newLasers
+    in gstate{lasers = spawned}
 
+updateLaser:: Float -> GameState -> GameState
+updateLaser sec gstate@(GameState _ _ _ _ _ _ l b _ _ _) =
+    let
+        timedOut = filterProjectiles (map (\x -> outOfTime x sec) l)
+        movedLaser = map move timedOut
+        updatedLasers = gstate{lasers = filterProjectiles movedLaser}
+    in  updatedLasers
 
 
 
