@@ -12,6 +12,8 @@ import Projectile
 import Random
 import System.Random
 import Constants
+import Animation
+import Player (Player)
 
 
 -- Function to update player movement
@@ -29,6 +31,9 @@ updateRotationPlayer p gstate =
                         then rotate_ p
                         else p
     in gstate { player = rotatedPlayer }
+
+updateAnimationPlayer :: Player -> Player
+updateAnimationPlayer p@Player{animation = a} = p{animation = updateAnimation a}
 
 updateEnemies ::  GameState -> GameState
 updateEnemies gstate@GameState{..} = if length scatters > 2 then gstate{comets = map (\x -> rotate_ (move x)) comets,
@@ -117,7 +122,7 @@ validSpawn e p rand | withinWrap e p = validSpawn (fromIntegral (fst newRand)) p
 updatePlayer:: GameState -> GameState
 updatePlayer gstate@(GameState _ _ p _ _ _ _ _ _ _ _)= 
     let
-        movedPlayer = updateMovementPlayer p gstate
+        movedPlayer = updateMovementPlayer (updateAnimationPlayer p) gstate
         rotatedPlayer = updateRotationPlayer (player movedPlayer) movedPlayer
         updatedPlayer = rotatedPlayer
     in  updatedPlayer

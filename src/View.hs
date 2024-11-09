@@ -16,6 +16,7 @@ import Button
 import Entity
 import Score
 import Graphics.Gloss (orange)
+import Constants (defaultPicture)
 
 view :: GameState -> IO Picture
 view gstate@(GameState _ _ _ _ _ _ _ _ _ _ GameOver) = do 
@@ -26,17 +27,17 @@ view gstate = return $ viewPure gstate
 viewPure :: GameState -> Picture
 viewPure gstate@GameState{state = Playing} = pictures [pictures (map render (comets gstate)), 
                                             
-                                            color red $ debugDirection (player gstate), 
+                                            drawDebug gstate, 
+                                            drawUI gstate,
                                             
-                                            color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate,
-                                            color white $ scale 0.1 0.1 $ translate 3450 3700 $ text "Exit:",
+                                            
                                             
                                             render (player gstate), 
                                             renderBullets (bullets gstate),
-                                            drawBoundingBox (bb (player gstate)), pictures (map render(scatters gstate)), 
                                             
-                                            pictures (map drawBoundingBox ( map getBB (comets gstate))) ,pictures (map drawBoundingBox ( map getBB (bullets gstate))), 
-                                            color orange $ render exitButton]
+                                            pictures (map render(scatters gstate))                                     
+                                            
+                                            ]
 viewPure gstate@GameState{state = Menu}   = pictures [color blue $ render playButton, 
                                                       color white $ translate (-335) (200) $ text "ASTEROIDS", 
                                                       color white $ scale 0.25 0.25 $ translate (-450) (-175)  $ text "Press to play:"]
@@ -61,7 +62,11 @@ drawHighScores = do
     return pic
 
 
-
+drawUI :: GameState -> Picture
+drawUI gstate@(GameState _ _ p _ _ _ _ _ _ s _) = pictures [color white $ scale 0.1 0.1 $ translate 3450 3700 $ text "Exit:",
+                                                            color orange $ render exitButton,
+                                                            color white $ scale 0.1 0.1 $ translate (-3800) 3800 $ text ("Lives: " ++ show (pLives p)),
+                                                            color white $ scale 0.1 0.1 $ translate (-3800) 3600 $ text ("Score: " ++ show s)]
 
 
 
@@ -81,6 +86,15 @@ drawHighScores = do
 
 
 -------DEBUG----------------------
+
+drawDebug :: GameState -> Picture
+drawDebug gstate | displayDebug = pictures [color red $ debugDirection (player gstate),
+                                            color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate,
+                                            drawBoundingBox (bb (player gstate)), 
+                                            pictures (map drawBoundingBox ( map getBB (comets gstate))) ,
+                                            pictures (map drawBoundingBox ( map getBB (bullets gstate)))]
+                 | otherwise = defaultPicture
+
 debugDirection :: Player -> Picture
 debugDirection Player{..} =
     let (x, y) = pLocation         -- Get player location

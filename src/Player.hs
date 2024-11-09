@@ -31,7 +31,7 @@ data Player = Player {
                 , isRotatingL :: Bool
                 , isRotatingR :: Bool
                 , isDecelling:: Bool
-                --, animation:: Animation
+                , animation:: Animation
                 , bb :: BoundingBox
                 }
 
@@ -53,13 +53,13 @@ p1 = Player {
                 , pLocation = player1Local -- center of the player
                 , pMovedir = (0,1)
                 , pFacing = (0,1)
-                , pShape = color blue  $ polygon[(0,0), (30,15), (0,30)]
+                , pShape = color blue  $ polygon [(0,0), (30,15), (0,30)]
                 , pSpeed = 0 
                 , isMoving = False    
                 , isRotatingL = False    
                 , isRotatingR = False
                 , isDecelling = False
-                --, animation = (Animate 1 0 [color blue (polygon[(0,0), (30,0), (30,30), (0,30)]), color red (polygon[(0,0), (30,0), (30,30), (0,30)])] True)
+                , animation = (Animate 1 0 (map (color blue) [polygon[(0,0), (30,15), (0,30)], pictures [polygon[(0,0), (30,15), (0,30)], polygon[(-5,8), (-15,15), (-5,22)]]]) True)
                 , bb = BB{centerX = (fst player1Local) + playerWidth/2 , centerY = (snd player1Local) + playerHeigth/2, halfWidth = playerWidth/2, halfHeigth = playerHeigth/2, rotation = 90}
 
             }

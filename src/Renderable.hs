@@ -24,7 +24,8 @@ transformations local@(x,y) dir cX cY pic= translate (x + cX) (y + cY)
             nAngle = (-1) * degrees(extractAngle dir)
 
 instance Renderable Player where
-    render player@Player{..} = transformations pLocation pFacing (playerWidth / 2) (playerHeigth / 2) pShape
+    render player@Player{..} | isMoving = transformations pLocation pFacing (playerWidth / 2) (playerHeigth / 2) $ renderAnimation animation
+                             | otherwise = transformations pLocation pFacing (playerWidth / 2) (playerHeigth / 2) pShape
 
 instance Renderable Comet where
     render comet@Comet{..} = transformations cLocation cFacing (halfWidth cBB) (halfHeigth cBB) cShape

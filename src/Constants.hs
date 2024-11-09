@@ -4,7 +4,11 @@ import Graphics.Gloss
 import Random
 import System.Random
 
---
+
+displayDebug :: Bool
+displayDebug = False
+
+-- Size of the Screen
 screenSize :: Int
 screenSize = 800
 
