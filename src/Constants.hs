@@ -43,7 +43,7 @@ spawningRadius :: Float
 spawningRadius = 100
 
 bulletSpeed :: Float
-bulletSpeed = 4
+bulletSpeed = 6
 
 epsilon :: Float
 epsilon = 1e-6  -- You can adjust this value as needed
@@ -106,3 +106,12 @@ scatterScore = 100
 -- Score gained from killing a comet
 ufoScore :: Int
 ufoScore = 200
+
+ufoWidth:: Float
+ufoWidth = 60
+
+ufoHeigth:: Float
+ufoHeigth = 60
+
+laserCooldown:: Int
+laserCooldown  = secToframes 2

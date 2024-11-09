@@ -5,6 +5,7 @@ import Graphics.Gloss
 import BoundingBox
 import Entity
 import Player
+import Enemy
 
 import Constants 
 
@@ -19,6 +20,9 @@ data Projectile = Projectile{
 }
 
 
+
+spawnLaser ::  Projectile -> Lasers -> Lasers
+spawnLaser x xs = x : xs 
 
 
 
@@ -41,8 +45,8 @@ createbullet  p@Player{..} =
         bulletLocation = ofset
         newRotation | isDecelling = degrees (extractAngle pFacing) 
                     | otherwise = degrees (extractAngle pMovedir)
-        direction   | isDecelling = pFacing
-                    | otherwise = pMovedir
+        -- direction   | isDecelling = pFacing
+        --             | otherwise = pMovedir
     in   Projectile {
         prShape = color blue $ polygon [(0,0), (0,10), (10,10), (10,0)],
         prBB = BB {
@@ -53,12 +57,36 @@ createbullet  p@Player{..} =
             rotation = newRotation -- Use degrees here for the display rotation
         },
         prLocation = bulletLocation,
-        prDirection = direction,
+        prDirection = pFacing,
         prAlive = True,   
         time = 0
 
     }
 
+createLaser:: UFO -> Projectile
+createLaser u@UFO{..} = 
+    let 
+        moveToBoundry = ((fst aimDir) * ufoWidth/2, (snd aimDir) * ufoHeigth/2)
+        newRotation = degrees (extractAngle aimDir)
+        ofset = (fst uLocation + (ufoWidth/2) + fst moveToBoundry, snd uLocation + (playerHeigth/2) + snd moveToBoundry)
+        laserLocal = ofset
+
+    in
+        Projectile {
+        prShape = color green $ polygon [(0,0), (0,10), (10,10), (10,0)],
+        prBB = BB {
+            centerX = fst laserLocal,
+            centerY = snd laserLocal,
+            halfWidth = 5,
+            halfHeigth = 5,
+            rotation = newRotation -- Use degrees here for the display rotation
+        },
+        prLocation = laserLocal,
+        prDirection = aimDir,
+        prAlive = True,   
+        time = 0
+        }
+ 
 
 instance Moveable Projectile where
     move p@Projectile{..} = p { 

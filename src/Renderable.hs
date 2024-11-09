@@ -33,6 +33,9 @@ instance Renderable Comet where
 instance Renderable Scatter where
     render scatter@Scatter{..} = transformations sLocation sFacing (halfWidth sBB) (halfHeigth sBB) sShape
 
+instance Renderable UFO where
+    render ufo@UFO{..} = transformations uLocation uFacing (halfWidth uBB) (halfHeigth uBB) uShape
+
 instance Renderable Projectile where
     render projectile@Projectile {..} = transformations prLocation prDirection 5 5 prShape
 

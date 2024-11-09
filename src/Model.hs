@@ -33,4 +33,4 @@ data GameState = GameState {
                  }
 
 initialState ::  GameState
-initialState  = GameState playButton 0 p1 [] [] [scat] [] [] seed 0 Menu 
+initialState  = GameState playButton 0 p1 [] [] [] [] [] seed 0 Menu 
