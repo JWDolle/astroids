@@ -26,8 +26,8 @@ handleCollision gstate@(GameState i e p c u s l b r sc Playing ) =
         scatterCollision = map (\y -> handleScatterCollision y gstate) s       
         ufoCollision     = map (\w -> handleUfoCollision w gstate) u
 
-        deadScatters       = filter (\t -> sLives t == 0) scatterCollision
-        newComets          = concatMap (`deadScatter` c) deadScatters
+        deadScatters       = filter (\t -> sLives t <= 0) scatterCollision
+        newComets          = concatMap (deadScatter) deadScatters
         newState | pLives playerCollision == 0 = GameOver
                  | otherwise = Playing
 
@@ -85,8 +85,8 @@ handleUfoCollision u gstate@GameState{..}    | ((invicible u) == False ) &&  (ch
 
 
 
-deadScatter :: Scatter -> [Comet] -> [Comet]
-deadScatter s@Scatter{..} c = c ++ [b1, b2, b3, b4]
+deadScatter :: Scatter -> [Comet]
+deadScatter s@Scatter{..} = [b1, b2, b3, b4]
     where
         sLoc = sLocation          -- Assuming sLocation is a function or field that gets location from Scatter
         sDir = sDirection       -- Assuming sDirection is a vector (x, y)

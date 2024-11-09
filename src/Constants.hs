@@ -6,7 +6,7 @@ import System.Random
 
 
 displayDebug :: Bool
-displayDebug = False
+displayDebug = True
 
 -- Size of the Screen
 screenSize :: Int

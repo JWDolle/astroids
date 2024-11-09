@@ -45,8 +45,8 @@ instance Renderable Button where
 renderBullets :: Bullets -> Picture
 renderBullets b = pictures $ map render b
    
-renderLasers:: Lasers -> [Picture]
-renderLasers l = map render l
+renderLasers:: Lasers -> Picture
+renderLasers l = pictures $ map render l
 -- Flips a picture over the y-axis
 flipPicture :: Picture -> Picture
 flipPicture = scale (-1) (1)

@@ -34,8 +34,10 @@ viewPure gstate@GameState{state = Playing} = pictures [pictures (map render (com
                                             
                                             render (player gstate), 
                                             renderBullets (bullets gstate),
+                                            renderLasers (lasers gstate),
                                             
-                                            pictures (map render(scatters gstate))                                     
+                                            pictures (map render(scatters gstate)),
+                                            pictures (map render(ufos gstate))                                  
                                             
                                             ]
 viewPure gstate@GameState{state = Menu}   = pictures [color blue $ render playButton, 

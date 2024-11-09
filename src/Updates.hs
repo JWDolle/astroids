@@ -14,6 +14,8 @@ import System.Random
 import Constants
 import Animation
 import Player (Player)
+import GHC.Base (VecElem(Int16ElemRep))
+import Random (randomRange)
 
 
 -- Function to update player movement
@@ -36,15 +38,30 @@ updateAnimationPlayer :: Player -> Player
 updateAnimationPlayer p@Player{animation = a} = p{animation = updateAnimation a}
 
 updateEnemies ::  GameState -> GameState
-updateEnemies gState@(GameState i e p c u s l b r sc Playing) = if length u > 0 then gState{comets = map (\x -> rotate_ (move x)) c,
+updateEnemies gState@(GameState i e p c u s l b r sc Playing) = if length s + length u >= 4 then gState{comets = map (\x -> rotate_ (move x)) c,
                                                   scatters = map (\x -> rotate_ (move x))s,
-                                                  ufos = map updateUfo u} else spawnUFO uf gState
+                                                  ufos = map updateUfo u} else spawnEnemy gState{comets = map (\x -> rotate_ (move x)) c,
+                                                  scatters = map (\x -> rotate_ (move x))s,
+                                                  ufos = map updateUfo u}
                         where 
                             updateUfo:: UFO -> UFO
                             updateUfo ufo | (invicible ufo) = ufo
                                           | otherwise = let moved = move ufo
                                                             newAim =  moved{aimDir = aimDirection (fst (uLocation ufo) + ufoWidth/2, snd (uLocation ufo) + ufoHeigth/2) (pLocation p)} 
                                                          in newAim
+
+spawnEnemy :: GameState -> GameState
+spawnEnemy gState@GameState{random = rn, elapsedTime = time} = case fst randomNumber of
+                                                1 -> spawnComet c1 gState{random = snd randomNumber}
+                                                2 -> spawnComet c1 gState{random = snd randomNumber}
+                                                3 -> spawnComet c1 gState{random = snd randomNumber}
+                                                4 -> spawnComet c1 gState{random = snd randomNumber}
+                                                5 -> spawnScatter scat gState{random = snd randomNumber}
+                                                6 -> if time > 30 then spawnUFO uf gState{random = snd randomNumber} else spawnScatter scat gState{random = snd randomNumber}
+                                                _ -> spawnComet c1 gState{random = snd randomNumber}
+                                                where
+                                                    randomNumber :: (Int,StdGen)
+                                                    randomNumber = randomRange (1,6) rn
 
 spawnComet :: Comet -> GameState -> GameState
 spawnComet (Comet  liv loc dir f sh sp  bb) gState@(GameState i e p c u s l b r sc Playing) = (GameState i e p (newCom:c) u s l b (snd y) sc Playing)
