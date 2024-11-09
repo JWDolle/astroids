@@ -29,6 +29,6 @@ renderAnimation (Animate _ frameIndex frames _) | frameIndex >= 0 && frameIndex 
 -- Updates an animation when the counter exceeds the animation threshold                                 
 updateAnimation :: Animation -> Animation
 updateAnimation (Animate counter frameIndex frames repeating) | counter > animationThreshold && not repeating = (Animate 0 (frameIndex + 1) frames repeating)
-                                                                | counter > animationThreshold && frameIndex + 1 < length frames = (Animate 0 (frameIndex + 1) frames repeating)
-                                                                | counter > animationThreshold = (Animate 0 0 frames repeating)
-                                                                | otherwise = (Animate (counter + 1) frameIndex frames repeating)
+                                                              | counter > animationThreshold && frameIndex + 1 < length frames = (Animate 0 (frameIndex + 1) frames repeating)
+                                                              | counter > animationThreshold = (Animate 0 0 frames repeating)
+                                                              | otherwise = (Animate (counter + 1) frameIndex frames repeating)

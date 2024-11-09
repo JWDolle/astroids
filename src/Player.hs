@@ -60,7 +60,7 @@ p1 = Player {
                 , isRotatingL = False    
                 , isRotatingR = False
                 , isDecelling = False
-                , animation = (Animate 1 0 (map (color blue) [polygon[(0,0), (30,15), (0,30)], pictures [polygon[(0,0), (30,15), (0,30)], polygon[(-5,8), (-15,15), (-5,22)]]]) True)
+                , animation = (Animate 0 0 (map (color blue) [polygon[(0,0), (30,15), (0,30)], pictures [polygon[(0,0), (30,15), (0,30)], polygon[(-5,8), (-15,15), (-5,22)]], pictures [polygon[(0,0), (30,15), (0,30)], polygon[(-5,8), (-20,15), (-5,22)]], pictures [polygon[(0,0), (30,15), (0,30)], polygon[(-5,8), (-15,15), (-5,22)]]]) True)
                 , bb = BB{centerX = (fst player1Local) + playerWidth/2 , centerY = (snd player1Local) + playerHeigth/2, halfWidth = playerWidth/2, halfHeigth = playerHeigth/2, rotation = 90}
 
             }
