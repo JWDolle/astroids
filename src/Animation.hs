@@ -1,25 +1,14 @@
--- We also will have a data type for animations that derives from the Renderable type class
---	data Animation = Animate { 
---				counter :: Int
---				frameIndex :: Int
---				frames :: [Picture]
---				} deriving (Renderable)
-
 module Animation where
---import Animation
---import Renderable
 import Constants
 import Graphics.Gloss
 
+-- Datatype for animations
 data Animation = Animate {
     counter :: Int,
     frameIndex :: Int,
     frames :: [Picture],
     repeating :: Bool
 } 
-
--- instance Renderable Animation where
---     render = renderAnimation
 
 -- Renders the current frame of an animation
 renderAnimation :: Animation -> Picture

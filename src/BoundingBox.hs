@@ -1,7 +1,6 @@
 
 module BoundingBox where
 import Constants
-import Entity
 import Graphics.Gloss
 
 --- WE USE A ORIENTED BOUNDING BOX ----
@@ -19,7 +18,7 @@ class HasBounding a where
     getBB :: a -> BoundingBox
 
 
-
+-- Gets the corners of a boundingbox
 bbCorners :: BoundingBox -> [Point]
 bbCorners (BB cx cy hw hh r) =
     let cosR = cos (radians r)
@@ -31,6 +30,7 @@ bbCorners (BB cx cy hw hh r) =
             (cx - hw * cosR + hh * sinR, cy - hw * sinR - hh * cosR)  ] -- Top Left
     in corners
 
+-- Projects a point of an OBB
 projectPoint :: (Float, Float) -> (Float, Float) -> Float
 projectPoint (x, y) (ax, ay) = (x * ax + y * ay)
 
@@ -43,10 +43,12 @@ projectBB obb axis =
         maxProj = maximum projections
     in (minProj, maxProj)
 
+-- Checks for overlap
 overlap :: (Float, Float) -> (Float, Float) -> Bool
 overlap (min1, max1) (min2, max2) = 
     not (max1 < min2 || max2 < min1)
                  
+-- Checks if two boundingboxes collide
 collide ::(HasBounding a , HasBounding b) => a -> b -> Bool
 collide a b    =    
     let 
@@ -63,7 +65,7 @@ collide a b    =
         projections2 = map (projectBB bb2) axes
     in all (uncurry overlap) (zip projections1 projections2)
 
-
+-- Updates the bounding box per frame
 updateBoundingBox :: Vector -> Float ->  BoundingBox -> BoundingBox
 updateBoundingBox (dx, dy) newRotation  bb = bb {
     centerX = correctedCenterX bb dx, 

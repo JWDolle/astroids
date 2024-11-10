@@ -29,4 +29,5 @@ executable Astroids
                      , Random
                      , Score
                      , Button
+                     , Animation
   default-language:    Haskell2010

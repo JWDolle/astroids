@@ -34,11 +34,13 @@ updateRotationPlayer p gstate =
                         else p
     in gstate { player = rotatedPlayer }
 
+-- Updates the animation for the player
 updateAnimationPlayer :: Player -> Player
 updateAnimationPlayer p@Player{animation = a} = p{animation = updateAnimation a}
 
+-- Updates all enemies in the game state
 updateEnemies ::  GameState -> GameState
-updateEnemies gState@(GameState i e p c u s l b r sc Playing) = if length s + length u >= 4 then gState{comets = map (\x -> rotate_ (move x)) c,
+updateEnemies gState@(GameState i e p c u s l b r sc Playing) = if length s + length u >= 4 && length c >= 4 then gState{comets = map (\x -> rotate_ (move x)) c,
                                                   scatters = map (\x -> rotate_ (move x))s,
                                                   ufos = map updateUfo u} else spawnEnemy gState{comets = map (\x -> rotate_ (move x)) c,
                                                   scatters = map (\x -> rotate_ (move x))s,
@@ -50,6 +52,7 @@ updateEnemies gState@(GameState i e p c u s l b r sc Playing) = if length s + le
                                                             newAim =  moved{aimDir = aimDirection (fst (uLocation ufo) + ufoWidth/2, snd (uLocation ufo) + ufoHeigth/2) (pLocation p)} 
                                                          in newAim
 
+-- Spawns a random enemy in a random location
 spawnEnemy :: GameState -> GameState
 spawnEnemy gState@GameState{random = rn, elapsedTime = time} = case fst randomNumber of
                                                 1 -> spawnComet c1 gState{random = snd randomNumber}
@@ -63,6 +66,7 @@ spawnEnemy gState@GameState{random = rn, elapsedTime = time} = case fst randomNu
                                                     randomNumber :: (Int,StdGen)
                                                     randomNumber = randomRange (1,6) rn
 
+-- Spawns a comet enemy in a random location and direction
 spawnComet :: Comet -> GameState -> GameState
 spawnComet (Comet  liv loc dir f sh sp  bb) gState@(GameState i e p c u s l b r sc Playing) = (GameState i e p (newCom:c) u s l b (snd y) sc Playing)
     where
@@ -82,6 +86,7 @@ spawnComet (Comet  liv loc dir f sh sp  bb) gState@(GameState i e p c u s l b r 
 
         newCom = (Comet  liv (fst x, fst y) ((fst randomDirectionX) - 1, (fst randomDirectionY) - 1) f sh sp newbb)
 
+-- Spawns a scatter enemy in a random location and direction
 spawnScatter :: Scatter -> GameState -> GameState
 spawnScatter (Scatter nam liv loc dir f sh sp  bb) gState@(GameState i e p c u s l b r sc Playing) = (GameState i e p c u (newscat:s) l b (snd y) sc Playing)
     where
@@ -101,6 +106,7 @@ spawnScatter (Scatter nam liv loc dir f sh sp  bb) gState@(GameState i e p c u s
 
         newscat = (Scatter nam liv (fst x, fst y) ((fst randomDirectionX) - 1, (fst randomDirectionY) - 1) f sh sp newbb)
 
+-- Spawns a UFO enemy in a random location and direction
 spawnUFO :: UFO -> GameState -> GameState
 spawnUFO (UFO liv fac loc dir sh bb inv aim shtcld) gState@(GameState i e p c u s l b r sc Playing) = (GameState i e p c (newUFO:u) s l b (snd loc) sc Playing)
     where
@@ -136,6 +142,7 @@ spawnUFO (UFO liv fac loc dir sh bb inv aim shtcld) gState@(GameState i e p c u 
         randomDir:: (Int, StdGen)
         randomDir = randomRange (1,2) (snd wall)
 
+-- Returns a valid spawn location and randomly generates a new location if the spawn is invalid
 validSpawn :: Float -> Float -> StdGen -> (Float, StdGen)
 validSpawn e p rand | withinWrap e p = validSpawn (fromIntegral (fst newRand)) p (snd newRand)
                     | otherwise = (e,rand)
@@ -144,7 +151,7 @@ validSpawn e p rand | withinWrap e p = validSpawn (fromIntegral (fst newRand)) p
         withinWrap :: Float -> Float -> Bool
         withinWrap a b = (a + spawningRadius > b && a - spawningRadius < b) || (a + spawningRadius > b + fromIntegral screenSize && a - spawningRadius < b + fromIntegral screenSize) || (a + spawningRadius > b - fromIntegral screenSize && a - spawningRadius < b - fromIntegral screenSize)
 
-
+-- Updates the player in the gamestate
 updatePlayer:: GameState -> GameState
 updatePlayer gstate@(GameState _ _ p _ _ _ _ _ _ _ _)= 
     let
@@ -153,6 +160,7 @@ updatePlayer gstate@(GameState _ _ p _ _ _ _ _ _ _ _)=
         updatedPlayer = rotatedPlayer
     in  updatedPlayer
 
+-- Updates the bullets in the gamestate
 updateBullets:: Float -> GameState -> GameState
 updateBullets secs gstate@(GameState _ _ _ _ _ _ _ b _ _ _) =
     let 
@@ -161,6 +169,7 @@ updateBullets secs gstate@(GameState _ _ _ _ _ _ _ b _ _ _) =
         updatedBullets = gstate{ bullets = filterProjectiles movedBullets }
     in  updatedBullets
 
+-- Spawns in a laser
 spawnLasers :: GameState -> GameState
 spawnLasers gstate@GameState{..} = 
     let
@@ -169,6 +178,7 @@ spawnLasers gstate@GameState{..} =
         spawned = lasers ++ newLasers
     in gstate{lasers = spawned}
 
+-- Updates the lasers in the gamestate
 updateLaser:: Float -> GameState -> GameState
 updateLaser sec gstate@(GameState _ _ _ _ _ _ l b _ _ _) =
     let

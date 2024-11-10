@@ -4,14 +4,14 @@ import Collision
 import Enemy
 import Updates
  
--- this is for a pipelin looking like this {GameState i e p c Playing}
+-- The update pipeline for the game
 pipeline1:: Float -> GameState -> GameState
 pipeline1 secs gstate@(GameState i e p c u s l b r sc Playing ) =
     let 
         timeUpdate = gstate{elapsedTime = e + secs }
         playerUpdate = updatePlayer timeUpdate
         enemiesUpdated = updateEnemies playerUpdate
-        --intermediat steps
+        --intermediate steps
         laserSpawned = spawnLasers enemiesUpdated
         resetUFOtimers = map filterUfo (ufos laserSpawned)
         --end intermediate steps

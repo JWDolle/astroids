@@ -4,7 +4,6 @@ module Model where
 import Entity
 import Player
 import Projectile
-import Sprites
 import Enemy
 import Button
 import System.Random
@@ -17,6 +16,7 @@ data State = Playing | Paused | GameOver | Menu
 nO_SECS_BETWEEN_CYCLES :: Float
 nO_SECS_BETWEEN_CYCLES = 1
 
+-- The gamestate for the game
 data GameState = GameState {
                    button  :: Button
                  , elapsedTime :: Float
@@ -29,8 +29,8 @@ data GameState = GameState {
                  , random :: StdGen
                  , score :: Int
                  , state :: State
-                 --, sprites :: Sprites
                  }
 
+-- The initial game state
 initialState ::  GameState
 initialState  = GameState playButton 0 p1 [] [] [] [] [] seed 0 Menu 

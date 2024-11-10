@@ -4,11 +4,6 @@ module Entity where
 
 
 import Graphics.Gloss
-import Constants
-
-pVelocity :: Float
-pVelocity = 2;
-
 
 class Moveable a where
     move:: a -> a

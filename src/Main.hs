@@ -8,6 +8,7 @@ import Constants
 
 import Graphics.Gloss.Interface.IO.Game
 
+-- The main function to play the game
 main :: IO ()
 main = playIO (InWindow "Counter" (screenSize, screenSize) (0, 0)) -- Or FullScreen
               black            -- Background color

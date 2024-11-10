@@ -19,23 +19,24 @@ data Projectile = Projectile{
     ,time :: Int
 }
 
+type Lasers = [Projectile]
+type Bullets = [Projectile]
 
-
+-- spawns in a laser
 spawnLaser ::  Projectile -> Lasers -> Lasers
 spawnLaser x xs = x : xs 
 
-
-
+-- spawns in a bullet
 spawnBullet :: Projectile  -> Bullets -> Bullets
 spawnBullet x xs | length xs < shootCooldown = x : xs
                  | otherwise =  xs
 
+-- Checks the life time of a projectile
 outOfTime :: Projectile -> Float -> Projectile
 outOfTime b secs | time b > bulletExistance = b {prAlive = False}
                  | otherwise = b
 
-type Lasers = [Projectile]
-type Bullets = [Projectile]
+-- Creates a bullet
 createbullet ::  Player -> Projectile
 createbullet  p@Player{..} =
     let
@@ -63,6 +64,7 @@ createbullet  p@Player{..} =
 
     }
 
+-- Creates a laser
 createLaser:: UFO -> Projectile
 createLaser u@UFO{..} = 
     let 
@@ -87,10 +89,10 @@ createLaser u@UFO{..} =
         time = 0
         }
  
-
+-- Movable for the projectile
 instance Moveable Projectile where
     move p@Projectile{..} = p { 
-        prLocation = adjusted,
+        prLocation = (centerX updatedBB - projectileWidth/2, centerY updatedBB - projectileWidth/2),
         prBB = updatedBB,
         time = time  + 1
     }
@@ -102,15 +104,14 @@ instance Moveable Projectile where
 
             -- Update the bounding box based on movement
             
-            updatedBB = updateBoundingBox (dx, dy) (rotation prBB)  prBB
-           
-
-   
+            updatedBB = updateBoundingBox (dx, dy) (rotation prBB)  prBB  
     rotate_ p = p
+
+-- Boundingbox for the projectile
 instance HasBounding Projectile where
     getBB p@Projectile{..} = prBB
 
 
-
+-- Filter the projectiles that are alive
 filterProjectiles :: [Projectile] -> [Projectile]
 filterProjectiles l = filter prAlive l

@@ -10,18 +10,7 @@ import BoundingBox
 import Random
 
 
----Data types
-cometWidth :: Float
-cometWidth = 30
-cometHeigth :: Float
-cometHeigth = 30
-
-scatterWidth :: Float
-scatterWidth = 60
-scatterHeigth:: Float
-scatterHeigth = 60
-
-    
+---Data types    
 data Scatter = Scatter { --become small comets
     sName:: String
     ,sLives :: Int
@@ -33,7 +22,7 @@ data Scatter = Scatter { --become small comets
     ,sBB :: BoundingBox
 }
 
-data UFO = UFO { --shoots the playerld
+data UFO = UFO { --shoots the player
     uLives :: Int
     ,uFacing :: Vector
     ,uLocation :: Point
@@ -57,7 +46,7 @@ data Comet = Comet { -- no intelligence
 
 
 
-
+-- Movable instances for each enemy type
 instance Moveable Comet where
     move c@Comet{..} =  c { 
         cLocation = (centerX updatedBB - cometWidth/2 , centerY updatedBB - cometHeigth/2),
@@ -158,6 +147,7 @@ instance HasBounding Scatter where
 
 ----EXAMPLE ENIMIES
 
+-- Comet instance
 c1 :: Comet
 c1 = Comet {
     cLives = 1
@@ -174,9 +164,10 @@ c1 = Comet {
               }
 }
 
+-- Scatter instance
 scat:: Scatter
 scat = Scatter {
-    sName = "Test comet"
+    sName = "scatter"
     ,sLives = 1
     ,sLocation = (-100, 100) -- center of the thing 
     ,sDirection = (1,0)
@@ -187,30 +178,33 @@ scat = Scatter {
     
 }
 
+-- UFO instance
 uf:: UFO
 uf = UFO{
     uLives = 1
     ,uFacing = (0,1)
     ,uLocation = (-100, 100) -- center of the thing 
     ,uDirection = (1,0)
-    ,uShape = color green $ polygon [(0,0), (0,60), (60,60),(60,0)]
-    ,uBB = BB{ centerX = -70, centerY = 130, halfWidth = 30, halfHeigth = 30, rotation = 90}
+    ,uShape = color green $ polygon [(0,0), (0,40), (40,40),(40,0)]
+    ,uBB = BB{ centerX = -70, centerY = 130, halfWidth = 20, halfHeigth = 20, rotation = 90}
     ,invicible  = False
     ,aimDir = (-1,0)
     ,laserCld = 0
     
 }
 
-
+-- Direction the UFO will aim at
 aimDirection :: Point -> Point -> Vector
 aimDirection u p = normalize(fst aim, snd aim)
     where 
         aim = ((fst p )- (fst u), (snd p) - (snd u))
 
+-- Checks if a UFO can shoot
 ufoCanshoot :: UFO  -> Bool
 ufoCanshoot u | laserCld  u < laserCooldown = False
               | otherwise = True
 
+-- Filters the ufo if it can shoot
 filterUfo :: UFO -> UFO
 filterUfo u = if ufoCanshoot u then u{laserCld = 0} else u
 

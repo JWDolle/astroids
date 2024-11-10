@@ -3,10 +3,11 @@ module Constants where
 import Graphics.Gloss
 import Random
 import System.Random
+import Button
 
-
+-- Bool to whether to display the debug information
 displayDebug :: Bool
-displayDebug = True
+displayDebug = False
 
 -- Size of the Screen
 screenSize :: Int
@@ -49,7 +50,7 @@ epsilon :: Float
 epsilon = 1e-6  -- You can adjust this value as needed
 
 
-
+-- Framerate of the game
 frameRate :: Int
 frameRate = 60
 
@@ -115,3 +116,58 @@ ufoHeigth = 60
 
 laserCooldown:: Int
 laserCooldown  = secToframes 2
+
+playWidth :: Float
+playWidth = 100
+
+playHeigth :: Float
+playHeigth = 50
+
+exitWidth :: Float
+exitWidth = 32
+
+exitHeigth :: Float
+exitHeigth = 32
+
+-- Creates a play button
+playButton :: Button
+playButton  = Button{ bShape = shape, bLocation = (0 - playWidth / 2,-100 - playHeigth / 2)}
+    where 
+        shape =  polygon[(0,0), (0,50), (100,50), (100,0)]
+
+-- Creates an exit button
+exitButton :: Button
+exitButton = Button {bShape = e, bLocation = (340, 330)}
+    where
+        e = polygon [(0,0),(32,0),(32,32),(0,32)]
+
+cometWidth :: Float
+cometWidth = 30
+
+cometHeigth :: Float
+cometHeigth = 30
+
+scatterWidth :: Float
+scatterWidth = 60
+
+scatterHeigth:: Float
+scatterHeigth = 60
+
+-- Stores the animation frames for when the player moves
+playerAnimationFrames :: [Picture]
+playerAnimationFrames = [polygon[(0,0), (30,15), (0,30)], pictures [polygon[(0,0), (30,15), (0,30)], polygon[(-5,8), (-15,15), (-5,22)]], pictures [polygon[(0,0), (30,15), (0,30)], polygon[(-5,8), (-20,15), (-5,22)]], pictures [polygon[(0,0), (30,15), (0,30)], polygon[(-5,8), (-15,15), (-5,22)]]]
+
+maxSpeed :: Float
+maxSpeed = 5
+
+player1Local:: Point
+player1Local = (0,0)
+
+playerWidth :: Float
+playerWidth = 30
+
+playerHeigth :: Float
+playerHeigth= 30
+
+projectileWidth :: Float
+projectileWidth = 10

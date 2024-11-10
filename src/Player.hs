@@ -8,17 +8,7 @@ import BoundingBox
 import Animation
 
 
-
-
-playerWidth :: Float
-playerWidth = 30
-
-playerHeigth :: Float
-playerHeigth= 30
-
-
-
--- if we want to have turning during 
+-- Datatype for the player
 data Player = Player {
                   pName :: String
                 , pLives :: Int
@@ -36,17 +26,7 @@ data Player = Player {
                 , invincible :: Bool
                 }
 
-
-
-
-maxSpeed :: Float
-maxSpeed = 5
-
-player1Local:: Point
-player1Local = (0,0)
-
-
-
+-- Instance of the player
 p1 :: Player
 p1 = Player {
                 pName = "player 1"
@@ -60,10 +40,9 @@ p1 = Player {
                 , isRotatingL = False    
                 , isRotatingR = False
                 , isDecelling = False
-                , animation = (Animate 0 0 (map (color blue) [polygon[(0,0), (30,15), (0,30)], pictures [polygon[(0,0), (30,15), (0,30)], polygon[(-5,8), (-15,15), (-5,22)]], pictures [polygon[(0,0), (30,15), (0,30)], polygon[(-5,8), (-20,15), (-5,22)]], pictures [polygon[(0,0), (30,15), (0,30)], polygon[(-5,8), (-15,15), (-5,22)]]]) True)
+                , animation = (Animate 0 0 (map (color blue) playerAnimationFrames) True)
                 , bb = BB{centerX = (fst player1Local) + playerWidth/2 , centerY = (snd player1Local) + playerHeigth/2, halfWidth = playerWidth/2, halfHeigth = playerHeigth/2, rotation = 90}
                 , invincible = True
-
             }
 
 instance HasBounding Player where
@@ -73,7 +52,7 @@ instance HasBounding Player where
 -- moveable objects are things that can rotate and move 
 instance Moveable Player where
     move p@Player {..} = p { 
-        pLocation = (centerX newbb - 15, centerY newbb - 15),  -- Update the player's location
+        pLocation = (centerX newbb - playerWidth/2, centerY newbb - playerHeigth/2),  -- Update the player's location
         pMovedir = newMovedir,  -- Update movement direction when isMoving is true
         pSpeed = newSpd,        -- Update speed based on acceleration or deceleration
         bb = newbb,
@@ -103,7 +82,6 @@ instance Moveable Player where
             
             -- Rotate the bounding box based on `pFacing` angle regardless of movement state
             newRotation = degrees $ extractAngle $ normalize pFacing
-            --newbb = updateBoundingBox (dx, dy) newRotation bb
 
             -- Check if we should keep decelerating
             newIsDecelling = newSpd > 0 

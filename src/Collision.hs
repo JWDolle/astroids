@@ -13,10 +13,7 @@ import Model
 
 ----EVERYTHING THAT NEEDS TO HAPPEN WHEN THERE IS A COLLISION
 
-
-
-
-
+-- Main collision handling function that handles all collisions
 handleCollision :: GameState -> GameState
 handleCollision gstate@(GameState i e p c u s l b r sc Playing ) =
     let playerCollision  = handlePlayerCollision p gstate
@@ -42,7 +39,7 @@ handleCollision gstate@(GameState i e p c u s l b r sc Playing ) =
     in gstate { player = playerCollision, comets = filteredComets, ufos = filteredUfo, scatters = filteredScatter, lasers = filteredLasers, bullets = filteredBullets, random = r, score = newScore, state = newState} 
 
 
-
+-- Handles the collision for a player
 handlePlayerCollision :: Player -> GameState -> Player
 handlePlayerCollision p gstate@GameState{..} |  ((invincible p)== False) && (checkCollision p comets || checkCollision p scatters || checkCollision p filteredUfos || checkCollision p lasers) =  p 
                         { pLives = pLives p - 1
@@ -58,34 +55,38 @@ handlePlayerCollision p gstate@GameState{..} |  ((invincible p)== False) && (che
                             filteredUfos = filter (not.invicible) ufos
 
 
-
+-- Checks if there is any collision for a specific boundingbox
 checkCollision :: (HasBounding b, HasBounding a) => a -> [b] -> Bool
 checkCollision a = any (collide a )
 
 
-
+-- Handles the collision for bullets
 handleBulletCollisions :: Projectile -> GameState -> Projectile
 handleBulletCollisions bullet gstate@GameState{..}  | checkCollision bullet comets || checkCollision bullet scatters || checkCollision bullet ufos = bullet{prAlive = False}
                                                     | otherwise = bullet
 
+-- Handles the collision for lasers
 handleLaserCollisions :: Projectile -> GameState -> Projectile                                           
 handleLaserCollisions laser gstate@GameState{..}    | (not (invincible player)) && collide laser player = laser{prAlive = False}
                                                     | otherwise = laser
+
+-- Handles the collision for comet enemies
 handleCometCollision :: Comet -> GameState -> Comet
 handleCometCollision c gstate@GameState{..}     |  (not (invincible player)) && (checkCollision c bullets || collide c player) = c {cLives = cLives c - 1}
                                                 | otherwise = c
 
+-- Handles the collision for scatter enemies
 handleScatterCollision :: Scatter -> GameState -> Scatter
 handleScatterCollision s gstate@GameState{..}  | (not (invincible player)) && (checkCollision s bullets  || collide s player)= s {sLives = sLives s - 1}
                                                | otherwise = s
 
-
+-- Handles the collision for UFO enemies
 handleUfoCollision :: UFO -> GameState -> UFO
 handleUfoCollision u gstate@GameState{..}    | (not (invincible player)) && ((invicible u) == False ) &&  (checkCollision u bullets  || collide u player) = u {uLives = uLives u - 1}
                                              | otherwise = u
 
 
-
+-- Causes a scatter to expload into comets when they are killed
 deadScatter :: Scatter -> [Comet]
 deadScatter s@Scatter{..} = [b1, b2, b3, b4]
     where

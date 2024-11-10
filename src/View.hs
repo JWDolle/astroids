@@ -18,28 +18,23 @@ import Score
 import Graphics.Gloss (orange)
 import Constants (defaultPicture)
 
+-- renders the game
 view :: GameState -> IO Picture
 view gstate@(GameState _ _ _ _ _ _ _ _ _ _ GameOver) = do 
     scores <- drawHighScores
     return $ pictures [scores, viewPure gstate]
 view gstate = return $ viewPure gstate
 
+-- randers the game in a pure form
 viewPure :: GameState -> Picture
-viewPure gstate@GameState{state = Playing} = pictures [pictures (map render (comets gstate)), 
-                                            
+viewPure gstate@GameState{state = Playing} = pictures [pictures (map render (comets gstate)),                                             
                                             drawDebug gstate, 
                                             drawUI gstate,
-                                            
-                                            
-                                            
                                             render (player gstate), 
                                             renderBullets (bullets gstate),
-                                            renderLasers (lasers gstate),
-                                            
+                                            renderLasers (lasers gstate),                                            
                                             pictures (map render(scatters gstate)),
-                                            pictures (map render(ufos gstate))                                  
-                                            
-                                            ]
+                                            pictures (map render(ufos gstate))]
 viewPure gstate@GameState{state = Menu}   = pictures [color blue $ render playButton, 
                                                       color white $ translate (-335) (200) $ text "ASTEROIDS", 
                                                       color white $ scale 0.25 0.25 $ translate (-450) (-175)  $ text "Press to play:"]
@@ -49,7 +44,7 @@ viewPure gstate@GameState{state = GameOver} = pictures [color blue $ render play
                                                         color white $ scale 0.25 0.25 $ translate (-550) (-175)  $ text "Return to menu:",
                                                         color white $ translate (-335) (200) $ text "GAMEOVER"]
 
-
+-- Draws the highscores to the screen
 drawHighScores :: IO Picture
 drawHighScores = do
     scoreString <- readFromFile scoreFilePath
@@ -63,7 +58,7 @@ drawHighScores = do
             color white $ scale 0.2 0.2 $ translate (1000) (-410) (text $ "5: " ++ show (scores !! 4))]
     return pic
 
-
+-- Draws UI elements to the screen
 drawUI :: GameState -> Picture
 drawUI gstate@(GameState _ _ p _ _ _ _ _ _ s _) = pictures [color white $ scale 0.1 0.1 $ translate 3450 3700 $ text "Exit:",
                                                             color orange $ render exitButton,
@@ -88,7 +83,7 @@ drawUI gstate@(GameState _ _ p _ _ _ _ _ _ s _) = pictures [color white $ scale 
 
 
 -------DEBUG----------------------
-
+-- Draws the debug
 drawDebug :: GameState -> Picture
 drawDebug gstate | displayDebug = pictures [color red $ debugDirection (player gstate),
                                             color white . translate (-200) 0 .scale 0.1 0.1 $ debugPlayer gstate,
@@ -96,13 +91,14 @@ drawDebug gstate | displayDebug = pictures [color red $ debugDirection (player g
                                             pictures (map drawBoundingBox ( map getBB (comets gstate))) ,
                                             pictures (map drawBoundingBox ( map getBB (bullets gstate)))]
                  | otherwise = defaultPicture
-
+-- Gets the direction of the player and displays it
 debugDirection :: Player -> Picture
 debugDirection Player{..} =
     let (x, y) = pLocation         -- Get player location
         (dx, dy) = pFacing-- Get direction vector
         directionEnd = (x + dx * 50, y + dy * 50)  -- Calculate end point
     in translate (playerWidth/2) (playerWidth/2) $ line [ (x, y), directionEnd ]  -- Draw a line from the location to the end point
+-- Draws debug text
 debugPlayer :: GameState -> Picture
 debugPlayer gstate = pictures [
     translate (-180) 680  textLine1,
@@ -121,7 +117,8 @@ debugPlayer gstate = pictures [
     translate (-180) (-1920) textLine15,
     translate (-180) (-2120) textLine16,
     translate (-180) (-2320) textLine17,
-    translate (-180) (-2520) textLine18
+    translate (-180) (-2520) textLine18,
+    translate (-180) (-2720) textLine19
   ]
   where
     cplayer = player gstate  -- Extract the player from the game state
@@ -150,16 +147,17 @@ debugPlayer gstate = pictures [
                  then text $ "prAlive 1: " ++ show (length (bullets gstate))
                  else text $ "prAlive 1: "++ show (length (bullets gstate))
     
-    textLine15 = text $ "Number of Enemies: " ++ show (length (comets gstate))
+    textLine15 = text $ "Number of Enemies: " ++ show (length (comets gstate) + length (scatters gstate) + length (ufos gstate))
     textLine16 = text $ "Score: " ++ show (score gstate)
     textLine17 = text $ "Lasers: " ++ show (length (lasers gstate))
     textLine18 = text $ "UFO dir: " ++ 
      if not (null (ufos gstate)) 
         then show (aimDir (head (ufos gstate))) 
         else "No UFOs"
+    textLine19 = text $ "Time: " ++ show (elapsedTime gstate)
    
 
-
+-- Draws a boundingbox around entities
 drawBoundingBox :: BoundingBox -> Picture
 drawBoundingBox bb =
     let corners = bbCorners bb  -- Get the corners of the bounding box

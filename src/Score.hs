@@ -29,5 +29,6 @@ readFromFile filePath = do
         evaluate (length content)
         return content
 
+-- Obtains the scores from a string
 getScores :: String -> [Int]
 getScores string = map read $ lines string

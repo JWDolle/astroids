@@ -12,19 +12,18 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
 import Score
+import Constants
 import Graphics.Gloss.Interface.IO.Game (Key(MouseButton))
 
 
--- | Handle one iteration of the game
-
--- GameState 
+-- Handles one iteration of the game 
 step :: Float -> GameState -> IO GameState
 step secs gstate@GameState{state = GameOver} = do
-    addHighScore (score gstate)
-    
+    addHighScore (score gstate)    
     return $ stepPure secs gstate{score = 0}
 step secs gstate@GameState{..} = return $ stepPure secs gstate
   
+-- Handles one iteration of the game in a pure form
 stepPure :: Float -> GameState -> GameState
 stepPure secs gstate@GameState{state = Playing} = pipeline1 secs gstate
 stepPure secs gstate@GameState{state = Menu} = gstate
@@ -32,7 +31,8 @@ stepPure secs gstate@GameState{state = Menu} = gstate
 
 stepPure sec gstate@GameState{state = Paused} = gstate
 stepPure sec gstate@GameState{state = GameOver} = gstate
-    
+
+-- XOR function   
 xor :: Bool -> Bool -> Bool
 xor a b = (a || b) && not (a && b)
                       
@@ -58,6 +58,8 @@ inputKey (EventKey (Char 'p') Down _ _) gstate@GameState{state = Playing}= gstat
 inputKey (EventKey (Char 'p') Down _ _) gstate@GameState{state = Paused}= gstate {state = Playing}
 
 inputKey (EventKey (SpecialKey KeySpace)Up _ _)  gstate@GameState{..} = gstate {player = ( player {invincible = False}),bullets = spawnBullet (createbullet player) bullets }
+
+-- Input keys for mouse and button handling
 inputKey (EventKey (MouseButton LeftButton)Down _ (x,y))  gstate@GameState{state = Menu} = newState
     where 
 
