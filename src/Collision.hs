@@ -44,13 +44,14 @@ handleCollision gstate@(GameState i e p c u s l b r sc Playing ) =
 
 
 handlePlayerCollision :: Player -> GameState -> Player
-handlePlayerCollision p gstate@GameState{..} |  checkCollision p comets || checkCollision p scatters || checkCollision p filteredUfos || checkCollision p lasers =  p 
+handlePlayerCollision p gstate@GameState{..} |  ((invincible p)== False) && (checkCollision p comets || checkCollision p scatters || checkCollision p filteredUfos || checkCollision p lasers) =  p 
                         { pLives = pLives p - 1
                         , pLocation = pLocation p1  -- Replace this with actual logic for new location
                         , bb = bb p1
                         , pSpeed = 0
                         , pMovedir = pMovedir p1
                         , pFacing = pFacing p1
+                        , invincible = True
                         }
                                              | otherwise = player
                         where
@@ -68,19 +69,19 @@ handleBulletCollisions bullet gstate@GameState{..}  | checkCollision bullet come
                                                     | otherwise = bullet
 
 handleLaserCollisions :: Projectile -> GameState -> Projectile                                           
-handleLaserCollisions laser gstate@GameState{..}    | collide laser player = laser{prAlive = False}
+handleLaserCollisions laser gstate@GameState{..}    | (not (invincible player)) && collide laser player = laser{prAlive = False}
                                                     | otherwise = laser
 handleCometCollision :: Comet -> GameState -> Comet
-handleCometCollision c gstate@GameState{..}     | checkCollision c bullets || collide c player = c {cLives = cLives c - 1}
+handleCometCollision c gstate@GameState{..}     |  (not (invincible player)) && (checkCollision c bullets || collide c player) = c {cLives = cLives c - 1}
                                                 | otherwise = c
 
 handleScatterCollision :: Scatter -> GameState -> Scatter
-handleScatterCollision s gstate@GameState{..}  | checkCollision s bullets  || collide s player= s {sLives = sLives s - 1}
+handleScatterCollision s gstate@GameState{..}  | (not (invincible player)) && (checkCollision s bullets  || collide s player)= s {sLives = sLives s - 1}
                                                | otherwise = s
 
 
 handleUfoCollision :: UFO -> GameState -> UFO
-handleUfoCollision u gstate@GameState{..}    | ((invicible u) == False ) &&  (checkCollision u bullets  || collide u player) = u {uLives = uLives u - 1}
+handleUfoCollision u gstate@GameState{..}    | (not (invincible player)) && ((invicible u) == False ) &&  (checkCollision u bullets  || collide u player) = u {uLives = uLives u - 1}
                                              | otherwise = u
 
 
