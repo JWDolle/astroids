@@ -16,4 +16,4 @@ A new UFO enemy will be able to spawn after 30 seconds of gameplay
 Buttons can be pressed through mouse input in the menus
 
 Note: If you want to enter debug mode, 
-set the Boolean in Constants.hs - Line 10 to True in order to see the debug
+set the Boolean in src/Constants.hs - Line 10 to True in order to see the debug
